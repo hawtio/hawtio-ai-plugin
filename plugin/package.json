@@ -25,14 +25,14 @@
     "langchain": "^1.2.39",
     "monaco-editor": "~0.52.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.4",
     "react-router-dom": "^6.30.3"
   },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.0.8",
     "@swc/core": "^1.15.18",
     "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
+    "@types/react-dom": "^19.2.3",
     "@types/react-router-dom": "^5.3.3",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
