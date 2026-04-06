@@ -437,6 +437,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hawtio/ai-plugin@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@hawtio/ai-plugin@workspace:."
+  dependencies:
+    "@hawtio/backend-middleware": "npm:^1.0.8"
+    "@hawtio/react": "npm:^2.0.0"
+    "@langchain/core": "npm:^1.1.38"
+    "@langchain/google-genai": "npm:^2.1.26"
+    "@langchain/ollama": "npm:^1.2.6"
+    "@patternfly/react-charts": "npm:^8.4.0"
+    "@patternfly/react-code-editor": "npm:^6.4.0"
+    "@patternfly/react-core": "npm:^6.4.0"
+    "@patternfly/react-icons": "npm:^6.4.0"
+    "@patternfly/react-styles": "npm:^6.4.0"
+    "@patternfly/react-table": "npm:^6.4.0"
+    "@patternfly/react-tokens": "npm:^6.4.0"
+    "@swc/core": "npm:^1.15.18"
+    "@types/react": "npm:^18.3.23"
+    "@types/react-dom": "npm:^18.3.7"
+    "@types/react-router-dom": "npm:^5.3.3"
+    copy-webpack-plugin: "npm:^14.0.0"
+    css-loader: "npm:^7.1.4"
+    html-webpack-plugin: "npm:^5.6.6"
+    jest: "npm:^30.3.0"
+    langchain: "npm:^1.2.39"
+    monaco-editor: "npm:~0.52.2"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-router-dom: "npm:^7.14.0"
+    replace: "npm:^1.2.2"
+    style-loader: "npm:^4.0.0"
+    swc-loader: "npm:^0.2.7"
+    webpack: "npm:^5.105.4"
+    webpack-cli: "npm:^7.0.0"
+    webpack-dev-server: "npm:^5.2.3"
+  languageName: unknown
+  linkType: soft
+
 "@hawtio/backend-middleware@npm:^1.0.8":
   version: 1.0.8
   resolution: "@hawtio/backend-middleware@npm:1.0.8"
@@ -1715,13 +1753,6 @@ __metadata:
     react: ">=17"
     react-dom: ">=17"
   checksum: 10/159566da042f29c15e506d4c49cd938b28644ad7710b266e35293c268286c48488b92d7c621f25700bfbabff84470c181ec2683a44c04d1749370c09d2e4a12b
-  languageName: node
-  linkType: hard
-
-"@remix-run/router@npm:1.23.2":
-  version: 1.23.2
-  resolution: "@remix-run/router@npm:1.23.2"
-  checksum: 10/50eb497854881bbd2e1016d4eb83c935ecd618e1c3888b74718851317e3b04edbaae9fe1baa49ec08c5c52cfe7118f4664e37144813d9500f45f922d6602a782
   languageName: node
   linkType: hard
 
@@ -3904,6 +3935,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie@npm:^1.0.1":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: 10/85538153054791155cf4d38d2e807e3b9382d71bf71d92fc46fca348515ea574049d0d9ef8eb84d2d54a681ad1d7a7316b1989b901dace50a6c0f4c3858dbdb2
+  languageName: node
+  linkType: hard
+
 "copy-webpack-plugin@npm:^14.0.0":
   version: 14.0.0
   resolution: "copy-webpack-plugin@npm:14.0.0"
@@ -5238,44 +5276,6 @@ __metadata:
   checksum: 10/8c7e9eeb8131fc18702f3a42623eb6b0b09d470347aa8badacac70e6d91f79657ab8c6b57c4c6fee3658cff405fac30e816d1cdfb3ed1fbf6045d0a4555cf4d4
   languageName: node
   linkType: hard
-
-"hawtio-ai-plugin@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "hawtio-ai-plugin@workspace:."
-  dependencies:
-    "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.0.0"
-    "@langchain/core": "npm:^1.1.38"
-    "@langchain/google-genai": "npm:^2.1.26"
-    "@langchain/ollama": "npm:^1.2.6"
-    "@patternfly/react-charts": "npm:^8.4.0"
-    "@patternfly/react-code-editor": "npm:^6.4.0"
-    "@patternfly/react-core": "npm:^6.4.0"
-    "@patternfly/react-icons": "npm:^6.4.0"
-    "@patternfly/react-styles": "npm:^6.4.0"
-    "@patternfly/react-table": "npm:^6.4.0"
-    "@patternfly/react-tokens": "npm:^6.4.0"
-    "@swc/core": "npm:^1.15.18"
-    "@types/react": "npm:^18.3.23"
-    "@types/react-dom": "npm:^18.3.7"
-    "@types/react-router-dom": "npm:^5.3.3"
-    copy-webpack-plugin: "npm:^14.0.0"
-    css-loader: "npm:^7.1.4"
-    html-webpack-plugin: "npm:^5.6.6"
-    jest: "npm:^30.3.0"
-    langchain: "npm:^1.2.39"
-    monaco-editor: "npm:~0.52.2"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    react-router-dom: "npm:^6.30.3"
-    replace: "npm:^1.2.2"
-    style-loader: "npm:^4.0.0"
-    swc-loader: "npm:^0.2.7"
-    webpack: "npm:^5.105.4"
-    webpack-cli: "npm:^7.0.0"
-    webpack-dev-server: "npm:^5.2.3"
-  languageName: unknown
-  linkType: soft
 
 "he@npm:^1.2.0":
   version: 1.2.0
@@ -8013,27 +8013,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.30.3":
-  version: 6.30.3
-  resolution: "react-router-dom@npm:6.30.3"
+"react-router-dom@npm:^7.14.0":
+  version: 7.14.0
+  resolution: "react-router-dom@npm:7.14.0"
   dependencies:
-    "@remix-run/router": "npm:1.23.2"
-    react-router: "npm:6.30.3"
+    react-router: "npm:7.14.0"
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 10/db974d801070e9967a076b31edca902e127793e02dc79f364461b94e81846a588c241d72e069f5b586b4a90ffd99798f5cb97753ac9d22fe90afa6dc008ab520
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10/74d8ca886b9282f10ba80f9af9d08fa33a6858afccca75ec62751ae3c78f410099675e0c705357fd43d37db61135a9ddbf016491b0ffb067329a779b0130190c
   languageName: node
   linkType: hard
 
-"react-router@npm:6.30.3":
-  version: 6.30.3
-  resolution: "react-router@npm:6.30.3"
+"react-router@npm:7.14.0":
+  version: 7.14.0
+  resolution: "react-router@npm:7.14.0"
   dependencies:
-    "@remix-run/router": "npm:1.23.2"
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
   peerDependencies:
-    react: ">=16.8"
-  checksum: 10/1a51bdcc42b8d7979228dea8b5c44a28a4add9b681781f75b74f5f920d20058a92ffe5f1d0ba0621f03abe1384b36025b53b402515ecb35f27a6a2f2f25d6fbe
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10/fcf42b30f580d453b60a40f5a7c9df729992228e34993df361598f7ef912c77b4ef993428962dfc78881170fdd7fc329c4dce7cc3ef17034a63485e4fd33cb62
   languageName: node
   linkType: hard
 
@@ -8449,6 +8453,13 @@ __metadata:
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
   checksum: 10/8980ebf7ae9eb945bb036b6e283c547ee783a1ad557a82babf758a065e2fb6ea337fd82cac30dd565c1e606e423f30024a19fff7afbf4977d784720c4026a8ef
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.2
+  resolution: "set-cookie-parser@npm:2.7.2"
+  checksum: 10/4b6f5ec4e3fa1aef471d9207117704d217ba6bb6443400b41f5ea945c4a7f6fc08e405a122c1a32b4ebde41f06dea75e02c2af87cee9abb27f3e3fe911e5839b
   languageName: node
   linkType: hard
 
