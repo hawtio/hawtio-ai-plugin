@@ -437,6 +437,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hawtio/ai-plugin@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@hawtio/ai-plugin@workspace:."
+  dependencies:
+    "@hawtio/backend-middleware": "npm:^1.0.8"
+    "@hawtio/react": "npm:^2.0.0"
+    "@langchain/core": "npm:^1.1.39"
+    "@langchain/google-genai": "npm:^2.1.26"
+    "@langchain/ollama": "npm:^1.2.6"
+    "@patternfly/react-charts": "npm:^8.4.0"
+    "@patternfly/react-code-editor": "npm:^6.4.0"
+    "@patternfly/react-core": "npm:^6.4.0"
+    "@patternfly/react-icons": "npm:^6.4.0"
+    "@patternfly/react-styles": "npm:^6.4.0"
+    "@patternfly/react-table": "npm:^6.4.0"
+    "@patternfly/react-tokens": "npm:^6.4.0"
+    "@swc/core": "npm:^1.15.18"
+    "@types/react": "npm:^18.3.23"
+    "@types/react-dom": "npm:^18.3.7"
+    "@types/react-router-dom": "npm:^5.3.3"
+    copy-webpack-plugin: "npm:^14.0.0"
+    css-loader: "npm:^7.1.4"
+    html-webpack-plugin: "npm:^5.6.6"
+    jest: "npm:^30.3.0"
+    langchain: "npm:^1.2.39"
+    monaco-editor: "npm:~0.52.2"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-router-dom: "npm:^6.30.3"
+    replace: "npm:^1.2.2"
+    style-loader: "npm:^4.0.0"
+    swc-loader: "npm:^0.2.7"
+    webpack: "npm:^5.105.4"
+    webpack-cli: "npm:^7.0.0"
+    webpack-dev-server: "npm:^5.2.3"
+  languageName: unknown
+  linkType: soft
+
 "@hawtio/backend-middleware@npm:^1.0.8":
   version: 1.0.8
   resolution: "@hawtio/backend-middleware@npm:1.0.8"
@@ -1112,9 +1150,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:^1.1.38":
-  version: 1.1.38
-  resolution: "@langchain/core@npm:1.1.38"
+"@langchain/core@npm:^1.1.39":
+  version: 1.1.39
+  resolution: "@langchain/core@npm:1.1.39"
   dependencies:
     "@cfworker/json-schema": "npm:^4.0.2"
     "@standard-schema/spec": "npm:^1.1.0"
@@ -1127,7 +1165,7 @@ __metadata:
     p-queue: "npm:^6.6.2"
     uuid: "npm:^11.1.0"
     zod: "npm:^3.25.76 || ^4"
-  checksum: 10/29d681a0753d80ddb17deced18461bc463ad3243c3a118189056d0e3765866c7f0aa402602ca72b6c254c1d70e04707fde133fcecd928601dd2c11a076db10c9
+  checksum: 10/0f397c766bca7f6e1b8dad54b36189eeec40192ee0bc19c9d135a4e99f7105ac8e43c66603a69547ec65dd0297dd64d10b0990fbc74d33f353b759f1891d7e1f
   languageName: node
   linkType: hard
 
@@ -5238,44 +5276,6 @@ __metadata:
   checksum: 10/8c7e9eeb8131fc18702f3a42623eb6b0b09d470347aa8badacac70e6d91f79657ab8c6b57c4c6fee3658cff405fac30e816d1cdfb3ed1fbf6045d0a4555cf4d4
   languageName: node
   linkType: hard
-
-"hawtio-ai-plugin@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "hawtio-ai-plugin@workspace:."
-  dependencies:
-    "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.0.0"
-    "@langchain/core": "npm:^1.1.38"
-    "@langchain/google-genai": "npm:^2.1.26"
-    "@langchain/ollama": "npm:^1.2.6"
-    "@patternfly/react-charts": "npm:^8.4.0"
-    "@patternfly/react-code-editor": "npm:^6.4.0"
-    "@patternfly/react-core": "npm:^6.4.0"
-    "@patternfly/react-icons": "npm:^6.4.0"
-    "@patternfly/react-styles": "npm:^6.4.0"
-    "@patternfly/react-table": "npm:^6.4.0"
-    "@patternfly/react-tokens": "npm:^6.4.0"
-    "@swc/core": "npm:^1.15.18"
-    "@types/react": "npm:^18.3.23"
-    "@types/react-dom": "npm:^18.3.7"
-    "@types/react-router-dom": "npm:^5.3.3"
-    copy-webpack-plugin: "npm:^14.0.0"
-    css-loader: "npm:^7.1.4"
-    html-webpack-plugin: "npm:^5.6.6"
-    jest: "npm:^30.3.0"
-    langchain: "npm:^1.2.39"
-    monaco-editor: "npm:~0.52.2"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    react-router-dom: "npm:^6.30.3"
-    replace: "npm:^1.2.2"
-    style-loader: "npm:^4.0.0"
-    swc-loader: "npm:^0.2.7"
-    webpack: "npm:^5.105.4"
-    webpack-cli: "npm:^7.0.0"
-    webpack-dev-server: "npm:^5.2.3"
-  languageName: unknown
-  linkType: soft
 
 "he@npm:^1.2.0":
   version: 1.2.0
