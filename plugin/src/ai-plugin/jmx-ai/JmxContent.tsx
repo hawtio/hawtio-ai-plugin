@@ -3,6 +3,7 @@ import {
   Content,
   Divider,
   EmptyState,
+  EmptyStateVariant,
   Nav,
   NavItem,
   NavList,
@@ -15,10 +16,10 @@ import React, { useContext } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import './JmxContent.css'
 import { Attributes, AttributeTable } from './attributes'
-import { MBeanTreeContext } from './context'
+import { MBeanTreeContext, pluginPathWithNodeId } from './context'
 import { pluginPath } from './globals'
 
-export const JmxContent: React.FC = () => {
+export const JmxContent: React.FunctionComponent = () => {
   const { selectedNode } = useContext(MBeanTreeContext)
   const { pathname, search } = useLocation()
 
@@ -39,10 +40,9 @@ export const JmxContent: React.FC = () => {
   const mBeanCollectionApplicable = (node: MBeanNode) => Boolean(node.children?.every(child => child.objectName))
   const hasAnyApplicableMBean = (node: MBeanNode) =>
     Boolean(node.objectName) || Boolean(node.children?.some(child => child.objectName))
-  const ALWAYS = (_node: MBeanNode) => true
 
-  const tableSelector = (node: MBeanNode): React.FC => {
-    const tablePriorityList: { condition: (node: MBeanNode) => boolean; element: React.FC }[] = [
+  const tableSelector = (node: MBeanNode) => {
+    const tablePriorityList = [
       { condition: mBeanApplicable, element: Attributes },
       { condition: mBeanCollectionApplicable, element: AttributeTable },
     ]
@@ -51,7 +51,7 @@ export const JmxContent: React.FC = () => {
   }
 
   const allNavItems = [
-    { id: 'attributes', title: 'Attributes', component: tableSelector(selectedNode), isApplicable: ALWAYS },
+    { id: 'attributes', title: 'Attributes', component: tableSelector(selectedNode), isApplicable: () => true },
     { id: 'operations', title: 'Operations', component: Operations, isApplicable: mBeanApplicable },
     { id: 'chart', title: 'Chart', component: Chart, isApplicable: hasAnyApplicableMBean },
   ]
@@ -59,8 +59,10 @@ export const JmxContent: React.FC = () => {
   /* Filter the nav items to those applicable to the selected node */
   const navItems = allNavItems.filter(nav => nav.isApplicable(selectedNode))
 
+  const searchWithNid = (pluginPathWithNodeId(selectedNode, new URLSearchParams(search)) as { search: string }).search
+
   const mbeanNav = (
-    <Nav aria-label='MBean Nav' variant="horizontal-subnav">
+    <Nav aria-label='MBean Nav' variant='horizontal-subnav'>
       <NavList>
         {navItems.map(nav => (
           <NavItem key={nav.id} isActive={pathname === `${pluginPath}/${nav.id}`}>
@@ -77,24 +79,27 @@ export const JmxContent: React.FC = () => {
 
   return (
     <PageGroup id='jmx-content'>
-      <PageSection hasBodyWrapper={false} id='jmx-content-header'>
+      <PageSection id='jmx-content-header' hasBodyWrapper={false}>
         <Title headingLevel='h1'>{selectedNode.name}</Title>
         <Content component='small'>{selectedNode.objectName}</Content>
       </PageSection>
-      <Divider />
-      <PageSection hasBodyWrapper={false} type='tabs' hasShadowBottom>
+      <PageSection type='tabs' hasBodyWrapper={false}>
         {mbeanNav}
       </PageSection>
       <PageSection
-        hasBodyWrapper={false}
         id='jmx-content-main'
         padding={{ default: 'noPadding' }}
         hasOverflowScroll
         aria-label='jmx-content-main'
+        hasBodyWrapper={false}
       >
         <Routes>
           {mbeanRoutes}
-          <Route key='root' path='/' element={<Navigate to={navItems[0]?.id ?? ''} />} />
+          <Route
+            key='root'
+            path='/'
+            element={<Navigate to={{ pathname: navItems[0]?.id ?? '', search: searchWithNid }} />}
+          />
         </Routes>
       </PageSection>
     </PageGroup>

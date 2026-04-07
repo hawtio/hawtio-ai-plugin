@@ -1,7 +1,7 @@
 import { EVENT_REFRESH, eventService, MBeanNode, MBeanTree, PluginNodeSelectionContext, workspace } from '@hawtio/react'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { pluginName, pluginPath } from './globals'
+import { To, useNavigate, useSearchParams } from 'react-router-dom'
+import { log, PARAM_KEY_NODE_ID, pluginName, pluginPath } from './globals'
 
 /**
  * Custom React hook for using JMX MBean tree.
@@ -11,6 +11,7 @@ export function useMBeanTree() {
   const [loaded, setLoaded] = useState(false)
   const { selectedNode, setSelectedNode } = useContext(PluginNodeSelectionContext)
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   /*
    * Need to preserve the selected node between re-renders since the
@@ -21,8 +22,24 @@ export function useMBeanTree() {
   refSelectedNode.current = selectedNode
 
   const populateTree = async () => {
-    const wkspTree: MBeanTree = await workspace.getTree()
+    const wkspTree = await workspace.getTree()
     setTree(wkspTree)
+
+    const nodeId = searchParams.get(PARAM_KEY_NODE_ID)
+    if (nodeId && nodeId !== refSelectedNode.current?.id) {
+      log.debug('Restore selected node with nid:', nodeId)
+      // Try to restore node from URL
+      const urlNode = wkspTree.find(node => node.id === nodeId)
+      if (urlNode) {
+        setSelectedNode(urlNode)
+        refSelectedNode.current = urlNode
+      } else {
+        // Clear nid as it is invalid
+        log.debug('Clear invalid nid:', nodeId)
+        searchParams.delete(PARAM_KEY_NODE_ID)
+        setSearchParams(searchParams)
+      }
+    }
 
     if (!refSelectedNode.current) return
 
@@ -35,10 +52,14 @@ export function useMBeanTree() {
 
     // Ensure the new version of the selected node is selected
     const newSelected = wkspTree.navigate(...path)
-    if (newSelected) setSelectedNode(newSelected)
-
-    /* On population of tree, ensure the url path is returned to the base plugin path */
-    navigate(pluginPath)
+    if (newSelected) {
+      setSelectedNode(newSelected)
+      // Reset to base path with nid to sync URL with restored selection
+      navigate(pluginPathWithNodeId(newSelected, searchParams))
+    } else {
+      // Node no longer exists - clear selection and go to base path
+      navigate(pluginPath)
+    }
   }
 
   useEffect(() => {
@@ -56,15 +77,23 @@ export function useMBeanTree() {
     loadTree()
 
     return () => eventService.removeListener(EVENT_REFRESH, listener)
-    /*
-     * This effect should only be called on mount so cannot depend on selectedNode
-     * But cannot have [] removed either as this seems to execute the effect repeatedly
-     * So disable the lint check.
-     */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return { tree, loaded, selectedNode, setSelectedNode }
+}
+
+/**
+ * Build URL query string with nid parameter, preserving other existing params
+ * @param node - The node to encode
+ * @param searchParams - The current URL search params to preserve, defaults to the ones from the window location
+ */
+export function pluginPathWithNodeId(
+  node: MBeanNode,
+  searchParams: URLSearchParams = new URLSearchParams(window.location.search),
+): Partial<To> {
+  searchParams.set(PARAM_KEY_NODE_ID, node.id)
+  const query = `?${searchParams.toString()}`
+  return { pathname: pluginPath, search: query }
 }
 
 type MBeanTreeContext = {
