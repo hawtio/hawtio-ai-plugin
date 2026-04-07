@@ -9,7 +9,7 @@ import {
   NavList,
   PageGroup,
   PageSection,
-  Title
+  Title,
 } from '@patternfly/react-core'
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
 import React, { useContext } from 'react'
@@ -26,12 +26,7 @@ export const JmxContent: React.FunctionComponent = () => {
   if (!selectedNode) {
     return (
       <PageSection hasBodyWrapper={false} isFilled>
-        <EmptyState
-          headingLevel='h1'
-          icon={CubesIcon}
-          titleText='Select MBean'
-          variant='full'
-        />
+        <EmptyState headingLevel='h1' icon={CubesIcon} titleText='Select MBean' variant='full' />
       </PageSection>
     )
   }

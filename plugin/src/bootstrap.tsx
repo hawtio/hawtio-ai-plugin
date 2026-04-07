@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(<HawtioInitialization verbose={true} />)
 
 import('@hawtio/react').then(async ({ hawtio, registerPlugins }) => {
-  // Register builtin plugins 
+  // Register builtin plugins
   registerPlugins()
 
   // Register the plugin under development

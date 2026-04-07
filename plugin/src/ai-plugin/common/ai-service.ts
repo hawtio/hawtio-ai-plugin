@@ -3,18 +3,20 @@ import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } f
 import { ToolCall } from '@langchain/core/messages/tool'
 import { Runnable } from '@langchain/core/runnables'
 import { DynamicStructuredTool } from '@langchain/core/tools'
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
-import { ChatOllama, ChatOllamaCallOptions } from "@langchain/ollama"
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
+import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama'
 import { log } from '../jmx-ai/globals'
 import { AiModel, MODELS } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
 
-
 const TOOLS: DynamicStructuredTool[] = [] as const
-const TOOLS_BY_NAME: Record<string, DynamicStructuredTool> = TOOLS.reduce((acc, tool) => {
-  acc[tool.name] = tool
-  return acc
-}, {} as Record<string, DynamicStructuredTool>)
+const TOOLS_BY_NAME: Record<string, DynamicStructuredTool> = TOOLS.reduce(
+  (acc, tool) => {
+    acc[tool.name] = tool
+    return acc
+  },
+  {} as Record<string, DynamicStructuredTool>,
+)
 
 export type MessageWithThink = {
   content: string
@@ -69,7 +71,11 @@ class AiService implements IAiService {
     }
   }
 
-  private getLlm(): ChatGoogleGenerativeAI | ChatOllama | Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions> | undefined {
+  private getLlm():
+    | ChatGoogleGenerativeAI
+    | ChatOllama
+    | Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions>
+    | undefined {
     if (!this.model || !this.llm) {
       const { model } = aiPreferencesService.loadOptions()
       const modelObj = MODELS.find(m => m.id === model) ?? MODELS[0]!

@@ -1,4 +1,11 @@
-import { AttributeValues, HawtioEmptyCard, HawtioLoadingCard, JmxContentMBeans, MBeanNode, PluginNodeSelectionContext } from '@hawtio/react'
+import {
+  AttributeValues,
+  HawtioEmptyCard,
+  HawtioLoadingCard,
+  JmxContentMBeans,
+  MBeanNode,
+  PluginNodeSelectionContext,
+} from '@hawtio/react'
 import { Panel } from '@patternfly/react-core'
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { JolokiaErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'

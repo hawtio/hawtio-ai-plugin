@@ -113,7 +113,10 @@ module.exports = (_, args) => {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       symlinks: false,
       alias: {
-        '@thumbmarkjs/thumbmarkjs': path.join(__dirname, './node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js'),
+        '@thumbmarkjs/thumbmarkjs': path.join(
+          __dirname,
+          './node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js',
+        ),
       },
     },
     ignoreWarnings: [

@@ -1,5 +1,20 @@
-import { AttributeValues, eventService, HawtioEmptyCard, HawtioLoadingCard, PluginNodeSelectionContext } from '@hawtio/react'
-import { Button, Drawer, DrawerContent, DrawerContentBody, Panel, Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core'
+import {
+  AttributeValues,
+  eventService,
+  HawtioEmptyCard,
+  HawtioLoadingCard,
+  PluginNodeSelectionContext,
+} from '@hawtio/react'
+import {
+  Button,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
+  Panel,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+} from '@patternfly/react-core'
 import { MonitoringIcon } from '@patternfly/react-icons'
 import { Table, Tbody, Td, Th, Thead, ThProps, Tr } from '@patternfly/react-table'
 import Jolokia from 'jolokia.js'
@@ -189,12 +204,7 @@ const AiJmxToolbar: React.FC<{
     <Toolbar id='ai-jmx-toolbar'>
       <ToolbarContent>
         <ToolbarItem>
-          <Button
-            variant='primary'
-            size='sm'
-            icon={<MonitoringIcon />}
-            onClick={diagnose}
-          >
+          <Button variant='primary' size='sm' icon={<MonitoringIcon />} onClick={diagnose}>
             &nbsp;Diagnose
           </Button>
         </ToolbarItem>

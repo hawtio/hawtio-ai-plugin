@@ -1,8 +1,4 @@
-import {
-  EmptyState,
-  PageSection,
-  Spinner,
-} from '@patternfly/react-core'
+import { EmptyState, PageSection, Spinner } from '@patternfly/react-core'
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
 import React from 'react'
 import Split from 'react-split'
@@ -25,12 +21,7 @@ export const Jmx: React.FunctionComponent = () => {
   if (tree.isEmpty()) {
     return (
       <PageSection hasBodyWrapper={false}>
-        <EmptyState
-          headingLevel='h1'
-          icon={CubesIcon}
-          titleText='No MBeans found'
-          variant='full'
-        />
+        <EmptyState headingLevel='h1' icon={CubesIcon} titleText='No MBeans found' variant='full' />
       </PageSection>
     )
   }

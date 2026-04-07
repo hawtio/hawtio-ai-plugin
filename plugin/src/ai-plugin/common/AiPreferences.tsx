@@ -1,9 +1,20 @@
-import { Button, CardBody, Form, FormGroup, FormSection, FormSelect, FormSelectOption, InputGroup, InputGroupItem, TextInput } from '@patternfly/react-core'
+import {
+  Button,
+  CardBody,
+  Form,
+  FormGroup,
+  FormSection,
+  FormSelect,
+  FormSelectOption,
+  InputGroup,
+  InputGroupItem,
+  TextInput,
+} from '@patternfly/react-core'
 import EyeIcon from '@patternfly/react-icons/dist/esm/icons/eye-icon'
 import EyeSlashIcon from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon'
 import React, { useState } from 'react'
 import { MODELS } from './ai-model'
-import { AiOptions, aiPreferencesService, } from './ai-preferences-service'
+import { AiOptions, aiPreferencesService } from './ai-preferences-service'
 
 export const AiPreferences: React.FunctionComponent = () => {
   const [options, setOptions] = useState(aiPreferencesService.loadOptions())
@@ -18,22 +29,19 @@ export const AiPreferences: React.FunctionComponent = () => {
     <CardBody>
       <Form isHorizontal>
         <FormSection title='AI' titleElement='h2'>
-          <FormGroup
-            fieldId='ai-prefs-form-model'
-            label='Model to use'
-          >
+          <FormGroup fieldId='ai-prefs-form-model' label='Model to use'>
             <FormSelect
               id='ai-prefs-form-model-input'
               aria-label='Form Select Model'
               value={options.model}
-              onChange={(_, model) => updateOptions({ model })}>
-              {MODELS.map(m => <FormSelectOption key={m.id} value={m.id} label={`${m.name} (${m.type})`} />)}
+              onChange={(_, model) => updateOptions({ model })}
+            >
+              {MODELS.map(m => (
+                <FormSelectOption key={m.id} value={m.id} label={`${m.name} (${m.type})`} />
+              ))}
             </FormSelect>
           </FormGroup>
-          <FormGroup
-            fieldId='ai-prefs-form-token'
-            label='Token for the model (optional)'
-          >
+          <FormGroup fieldId='ai-prefs-form-token' label='Token for the model (optional)'>
             <InputGroup>
               <InputGroupItem isFill>
                 <TextInput

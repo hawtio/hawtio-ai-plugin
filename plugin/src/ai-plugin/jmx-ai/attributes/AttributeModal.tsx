@@ -16,7 +16,7 @@ import {
   HintTitle,
   TextArea,
   TextInput,
-  Title
+  Title,
 } from '@patternfly/react-core'
 import { InfoCircleIcon } from '@patternfly/react-icons'
 import React, { useContext, useEffect, useState } from 'react'
@@ -166,7 +166,9 @@ export const AttributeModal: React.FC<{
       {aiMessage && (
         <DrawerPanelBody>
           <Hint>
-            <HintTitle><InfoCircleIcon /> Diagnosis</HintTitle>
+            <HintTitle>
+              <InfoCircleIcon /> Diagnosis
+            </HintTitle>
             <HintBody>
               <Markdown>{diagnosis.content}</Markdown>
             </HintBody>
