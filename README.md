@@ -12,7 +12,7 @@ This is an extension plugin that adds AI functionality to Hawtio. This plugin is
 <dependency>
     <groupId>io.hawt.ai</groupId>
     <artifactId>hawtio-ai-plugin</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
