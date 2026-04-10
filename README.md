@@ -1,6 +1,7 @@
 # Hawtio AI Plugin
 
 [![Build](https://github.com/hawtio/hawtio-ai-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/hawtio/hawtio-ai-plugin/actions/workflows/build.yml)
+[![npm](https://img.shields.io/npm/v/@hawtio/ai-plugin)](https://www.npmjs.com/package/@hawtio/ai-plugin)
 
 This is an extension plugin that adds AI functionality to Hawtio. This plugin is intended for use with [Hawtio v5](https://github.com/hawtio/hawtio).
 
