@@ -69,7 +69,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>build</arguments>
+              <arguments>build:webpack</arguments>
             </configuration>
           </execution>
           <execution>
@@ -78,7 +78,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>replace-version</arguments>
+              <arguments>replace-version ./build/static/js</arguments>
             </configuration>
           </execution>
         </executions>
