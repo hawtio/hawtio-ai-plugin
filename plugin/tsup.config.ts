@@ -13,6 +13,6 @@ export default defineConfig(() => {
       '.jpg': 'dataurl',
       '.png': 'dataurl',
       '.md': 'text',
-    }
+    },
   }
 })

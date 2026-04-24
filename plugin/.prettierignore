@@ -3,3 +3,5 @@ coverage
 dist
 target
 .yarn
+.yarnrc.yml
+CHANGELOG.md
