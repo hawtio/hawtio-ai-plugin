@@ -682,7 +682,7 @@ __metadata:
   resolution: "@hawtio/ai-plugin@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.0.0"
+    "@hawtio/react": "npm:^2.1.0"
     "@langchain/core": "npm:^1.1.38"
     "@langchain/google-genai": "npm:^2.1.26"
     "@langchain/ollama": "npm:^1.2.6"
@@ -738,37 +738,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.0":
+"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.1":
   version: 4.18.1
   resolution: "@hawtio/camel-model@npm:4.18.1"
   checksum: 10/04ad3639e68e887a1b74f4f7ea080e5b01fc8de4182eb935698b51cd89b585a4150bd1d5e727f59c5ad19455d24bc3a39c2f63a4f8fc51cc316a0c5d2de3439a
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@hawtio/react@npm:2.0.0"
+"@hawtio/react@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@hawtio/react@npm:2.1.0"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
-    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.0"
+    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.1"
     "@jolokia.js/simple": "npm:^2.5.0"
     "@module-federation/utilities": "npm:^3.1.77"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.4"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.8.1"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.3.2"
+    dompurify: "npm:^3.4.1"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
-    keycloak-js: "npm:^26.2.3"
+    keycloak-js: "npm:^26.2.4"
     oauth4webapi: "npm:^3.8.5"
     react-markdown: "npm:^10.1.0"
     react-split: "npm:^2.0.14"
     reactflow: "npm:^11.11.4"
     superstruct: "npm:^2.0.2"
     victory: "npm:^37.3.6"
-    xml-formatter: "npm:^3.6.7"
+    xml-formatter: "npm:^3.7.0"
   peerDependencies:
     "@patternfly/react-charts": ^8
     "@patternfly/react-code-editor": ^6
@@ -781,7 +781,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/d3c4e75775a1fec9e48a738afbefcbf03a9cbe11adab7dae64f42cf53a4e98952627752890ec88fcd7530169367da3faefacaef1ca51d13255737a6b6460ff61
+  checksum: 10/0c5d1b7da8172f9e6b6722323ee046207cef0cf3dd45bd7d5f0a4a0d420172e9197106ae30dd3f281bdaca887149b02e2e4d9fa0556c3e3a56265bb21048561b
   languageName: node
   linkType: hard
 
@@ -2381,10 +2381,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.7.4":
-  version: 1.7.6
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.7.6"
-  checksum: 10/22a5cb513f46eec0dd72ef1f9a2726ec76234084f94463614262cf54a319f6bbff2fcfda03217cc42aec3f7e32d2166284cdf85fcd8840ac421e8ec0505c40ba
+"@thumbmarkjs/thumbmarkjs@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.8.1"
+  checksum: 10/474468cc4fb582a169960f3db420151905203b875247b7f5c05313a89529764639a719e115766ed1edc3bd726985da3fc30941583a0e0b2960a22cab1cd1f719
   languageName: node
   linkType: hard
 
@@ -5406,15 +5406,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.2":
-  version: 3.3.3
-  resolution: "dompurify@npm:3.3.3"
+"dompurify@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "dompurify@npm:3.4.1"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/4cc9c539ed7136d46c6577613b8e20871c2b6165db01dfbd2a3c11c75f9e339c496ac6519a1c3190115def8cadae3720bef0417fc43fa28802c7407bab174da9
+  checksum: 10/dcaf945376eff2a61841b205501b163b2c8ae9afe7251e68276b561d9fcf943cefc67e2631fdeae080b52a8b37c96e6beb7e6ae80ad8a83692ff67965dd6b4db
   languageName: node
   linkType: hard
 
@@ -7944,10 +7944,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keycloak-js@npm:^26.2.3":
-  version: 26.2.3
-  resolution: "keycloak-js@npm:26.2.3"
-  checksum: 10/8718782ee0a3bde35c76fbe7fcb35d4456f4fa50628ef3fe5d69a9ed301a26ce5a7d8f6912614d65a46145d9cf19d2858ba11a5eda52d4654850bef6457f261c
+"keycloak-js@npm:^26.2.4":
+  version: 26.2.4
+  resolution: "keycloak-js@npm:26.2.4"
+  checksum: 10/d12e595486160267b18d845e6587303298d38488161a9aaa4679a530315404078bdedf74d3e01f7472585f80983ce65b4b49fc323ceade2329e36c1507dc606c
   languageName: node
   linkType: hard
 
@@ -12664,7 +12664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-formatter@npm:^3.6.7":
+"xml-formatter@npm:^3.7.0":
   version: 3.7.0
   resolution: "xml-formatter@npm:3.7.0"
   dependencies:

@@ -19,7 +19,7 @@
     "prepack": "yarn build:tsup && yarn replace-version ./dist"
   },
   "dependencies": {
-    "@hawtio/react": "^2.0.0",
+    "@hawtio/react": "^2.1.0",
     "@langchain/core": "^1.1.38",
     "@langchain/google-genai": "^2.1.26",
     "@langchain/ollama": "^1.2.6",
