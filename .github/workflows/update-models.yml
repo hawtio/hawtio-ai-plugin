@@ -1,0 +1,47 @@
+name: Update AI Models
+
+on:
+  schedule:
+    # Run at 06:00 UTC on the first day of every month
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+jobs:
+  update-models:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch and update AI model list
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node .github/scripts/update-models.mjs
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update supported AI model list'
+          title: 'chore: automatic update of supported AI model list'
+          body: |
+            Automatic update of the supported AI model list.
+
+            The Google Gemini model list was refreshed from the
+            [Generative Language API](https://generativelanguage.googleapis.com/v1beta/models).
+            Ollama models are managed manually and were not changed.
+
+            This pull request was created automatically by the
+            [Update AI Models](.github/workflows/update-models.yml) workflow.
+          branch: auto/update-models
+          delete-branch: true
+          labels: automated pr

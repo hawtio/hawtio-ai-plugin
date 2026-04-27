@@ -6,7 +6,7 @@ import { DynamicStructuredTool } from '@langchain/core/tools'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama'
 import { log } from '../jmx-ai/globals'
-import { AiModel, MODELS } from './ai-model'
+import { AiModel, buildModelFromId, MODELS } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
 
 const TOOLS: DynamicStructuredTool[] = [] as const
@@ -78,7 +78,7 @@ class AiService implements IAiService {
     | undefined {
     if (!this.model || !this.llm) {
       const { model } = aiPreferencesService.loadOptions()
-      const modelObj = MODELS.find(m => m.id === model) ?? MODELS[0]!
+      const modelObj = MODELS.find(m => m.id === model) ?? buildModelFromId(model)
       this.reset(modelObj)
     }
     if (this.llmWithTools) {
