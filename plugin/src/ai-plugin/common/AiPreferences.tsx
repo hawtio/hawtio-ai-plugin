@@ -25,6 +25,17 @@ export const AiPreferences: React.FunctionComponent = () => {
     setOptions({ ...options, ...updated })
   }
 
+  const selectedModel = MODELS.find(m => m.id === options.model)
+  const isOllama = selectedModel?.type === 'ollama'
+  const tokenLabel =
+    selectedModel?.type === 'anthropic'
+      ? 'Anthropic API key'
+      : selectedModel?.type === 'google-genai'
+        ? 'Google API key'
+        : selectedModel?.type === 'openai'
+          ? 'OpenAI API key'
+          : 'API key (optional)'
+
   return (
     <CardBody>
       <Form isHorizontal>
@@ -41,28 +52,42 @@ export const AiPreferences: React.FunctionComponent = () => {
               ))}
             </FormSelect>
           </FormGroup>
-          <FormGroup fieldId='ai-prefs-form-token' label='Token for the model (optional)'>
-            <InputGroup>
-              <InputGroupItem isFill>
-                <TextInput
-                  id='ai-prefs-form-token-input'
-                  aria-label='Form Select Token'
-                  type={passwordHidden ? 'password' : 'text'}
-                  value={options.token}
-                  onChange={(_, token) => updateOptions({ token })}
-                />
-              </InputGroupItem>
-              <InputGroupItem>
-                <Button
-                  variant='control'
-                  onClick={() => setPasswordHidden(!passwordHidden)}
-                  aria-label={passwordHidden ? 'Show password' : 'Hide password'}
-                >
-                  {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
-                </Button>
-              </InputGroupItem>
-            </InputGroup>
-          </FormGroup>
+          {isOllama && (
+            <FormGroup fieldId='ai-prefs-form-url' label='Ollama base URL (optional)'>
+              <TextInput
+                id='ai-prefs-form-url-input'
+                aria-label='Form Ollama URL'
+                type='url'
+                placeholder='http://localhost:11434'
+                value={options.url ?? ''}
+                onChange={(_, url) => updateOptions({ url })}
+              />
+            </FormGroup>
+          )}
+          {!isOllama && (
+            <FormGroup fieldId='ai-prefs-form-token' label={tokenLabel}>
+              <InputGroup>
+                <InputGroupItem isFill>
+                  <TextInput
+                    id='ai-prefs-form-token-input'
+                    aria-label='Form Select Token'
+                    type={passwordHidden ? 'password' : 'text'}
+                    value={options.token}
+                    onChange={(_, token) => updateOptions({ token })}
+                  />
+                </InputGroupItem>
+                <InputGroupItem>
+                  <Button
+                    variant='control'
+                    onClick={() => setPasswordHidden(!passwordHidden)}
+                    aria-label={passwordHidden ? 'Show password' : 'Hide password'}
+                  >
+                    {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+                  </Button>
+                </InputGroupItem>
+              </InputGroup>
+            </FormGroup>
+          )}
         </FormSection>
       </Form>
     </CardBody>

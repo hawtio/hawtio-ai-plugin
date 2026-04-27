@@ -6,6 +6,7 @@ export const STORAGE_KEY_PREFERENCES = 'ai.preferences'
 export type AiOptions = {
   model: string
   token?: string
+  url?: string
 }
 
 export const DEFAULT_OPTIONS: AiOptions = {

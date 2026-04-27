@@ -3,8 +3,10 @@ import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } f
 import { ToolCall } from '@langchain/core/messages/tool'
 import { Runnable } from '@langchain/core/runnables'
 import { DynamicStructuredTool } from '@langchain/core/tools'
+import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama'
+import { ChatOpenAI } from '@langchain/openai'
 import { log } from '../jmx-ai/globals'
 import { AiModel, MODELS } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
@@ -32,7 +34,7 @@ export interface IAiService {
 
 class AiService implements IAiService {
   private model?: AiModel
-  private llm?: ChatGoogleGenerativeAI | ChatOllama
+  private llm?: ChatGoogleGenerativeAI | ChatOllama | ChatOpenAI | ChatAnthropic
   private llmWithTools?: Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions>
   private messages: BaseMessage[] = []
 
@@ -43,10 +45,17 @@ class AiService implements IAiService {
     log.info('AI model to use:', model.id)
     // Should we keep the message history when changing model?
     //this.messages = []
-    const { token } = aiPreferencesService.loadOptions()
+    const { token, url } = aiPreferencesService.loadOptions()
     this.model = model
     try {
       switch (this.model.type) {
+        case 'anthropic':
+          this.llm = new ChatAnthropic({
+            model: this.model.id,
+            apiKey: token,
+            temperature: 0,
+          })
+          break
         case 'google-genai':
           this.llm = new ChatGoogleGenerativeAI({
             model: this.model.id,
@@ -55,10 +64,18 @@ class AiService implements IAiService {
             disableStreaming: true,
           })
           break
+        case 'openai':
+          this.llm = new ChatOpenAI({
+            model: this.model.id,
+            apiKey: token,
+            temperature: 0,
+          })
+          break
         case 'ollama':
         default:
           this.llm = new ChatOllama({
             model: this.model.id,
+            baseUrl: url,
             streaming: false,
           })
       }
@@ -74,6 +91,8 @@ class AiService implements IAiService {
   private getLlm():
     | ChatGoogleGenerativeAI
     | ChatOllama
+    | ChatOpenAI
+    | ChatAnthropic
     | Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions>
     | undefined {
     if (!this.model || !this.llm) {
