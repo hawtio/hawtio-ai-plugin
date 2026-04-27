@@ -1,4 +1,4 @@
-import { MODELS } from './ai-model'
+import { buildModelFromId, MODELS } from './ai-model'
 import { aiService } from './ai-service'
 
 export const STORAGE_KEY_PREFERENCES = 'ai.preferences'
@@ -28,10 +28,8 @@ class AiPreferencesService implements IAiPreferencesService {
     const updated = { ...this.loadOptions(), ...options }
     localStorage.setItem(STORAGE_KEY_PREFERENCES, JSON.stringify(updated))
     if (options.model) {
-      const modelObj = MODELS.find(m => m.id === options.model)
-      if (modelObj) {
-        aiService.reset(modelObj)
-      }
+      const modelObj = MODELS.find(m => m.id === options.model) ?? buildModelFromId(options.model)
+      aiService.reset(modelObj)
     }
   }
 }
