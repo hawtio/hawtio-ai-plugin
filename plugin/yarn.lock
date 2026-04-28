@@ -5,6 +5,22 @@ __metadata:
   version: 9
   cacheKey: 10
 
+"@anthropic-ai/sdk@npm:^0.90.0":
+  version: 0.90.0
+  resolution: "@anthropic-ai/sdk@npm:0.90.0"
+  dependencies:
+    json-schema-to-ts: "npm:^3.1.1"
+  peerDependencies:
+    zod: ^3.25.0 || ^4.0.0
+  peerDependenciesMeta:
+    zod:
+      optional: true
+  bin:
+    anthropic-ai-sdk: bin/cli
+  checksum: 10/6a256cde39b1b2ac3b6a4af9b25ab6d7f93db98f4c0f9a970f239324a06f4d6ca5ee84c61618ad5ebf38b46785d55f67fceee373716482083955524a828e5ee7
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.27.1, @babel/code-frame@npm:^7.28.6, @babel/code-frame@npm:^7.29.0":
   version: 7.29.0
   resolution: "@babel/code-frame@npm:7.29.0"
@@ -335,6 +351,13 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 10/5c55f9c63bd36cf3d7e8db892294c8f85000f9c1526c3a1cc310d47d1e174f5c6f6605e5cc902c4636d885faba7a9f3d5e5edc6b35e4f3b1fd4c2d58d0304fa5
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.18.3":
+  version: 7.29.2
+  resolution: "@babel/runtime@npm:7.29.2"
+  checksum: 10/f55ba4052aa0255055b34371a145fbe69c29b37b49eaea14805b095bfb4153701486416e89392fd27ec8abafa53868be86e960b9f8f959fff91f2c8ac2a14b02
   languageName: node
   linkType: hard
 
@@ -683,9 +706,11 @@ __metadata:
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
     "@hawtio/react": "npm:^2.1.0"
-    "@langchain/core": "npm:^1.1.38"
+    "@langchain/anthropic": "npm:^1.3.27"
+    "@langchain/core": "npm:^1.1.41"
     "@langchain/google-genai": "npm:^2.1.26"
     "@langchain/ollama": "npm:^1.2.6"
+    "@langchain/openai": "npm:^1.4.4"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -1402,9 +1427,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:^1.1.38":
-  version: 1.1.38
-  resolution: "@langchain/core@npm:1.1.38"
+"@langchain/anthropic@npm:^1.3.27":
+  version: 1.3.27
+  resolution: "@langchain/anthropic@npm:1.3.27"
+  dependencies:
+    "@anthropic-ai/sdk": "npm:^0.90.0"
+    zod: "npm:^3.25.76 || ^4"
+  peerDependencies:
+    "@langchain/core": ^1.1.41
+  checksum: 10/76312c63ef5967a62533ddf808e6364c0cf1ca10047df592f5a18e0a5816396925a7e291590ef7b0319e89572fa3f62b4413cb6485e37a335714eab7a96983fa
+  languageName: node
+  linkType: hard
+
+"@langchain/core@npm:^1.1.41":
+  version: 1.1.41
+  resolution: "@langchain/core@npm:1.1.41"
   dependencies:
     "@cfworker/json-schema": "npm:^4.0.2"
     "@standard-schema/spec": "npm:^1.1.0"
@@ -1417,7 +1454,7 @@ __metadata:
     p-queue: "npm:^6.6.2"
     uuid: "npm:^11.1.0"
     zod: "npm:^3.25.76 || ^4"
-  checksum: 10/29d681a0753d80ddb17deced18461bc463ad3243c3a118189056d0e3765866c7f0aa402602ca72b6c254c1d70e04707fde133fcecd928601dd2c11a076db10c9
+  checksum: 10/0e270fbeb66aefd087729962bdd6f9632725fb702dcf55f1b18fd9fc0ebab34e5f93ce6a500e325198084306e49ad14b91ee74629fc6ebc19a234ea595d89774
   languageName: node
   linkType: hard
 
@@ -1501,6 +1538,19 @@ __metadata:
   peerDependencies:
     "@langchain/core": ^1.0.0
   checksum: 10/11bdf97f6f3c2506c3d9eb88b0792882e08c0f82c3d5bfb2854a474fed3cb29d20377ff78167a7bfa8e0543cc8a20ce0068efa22401e335d77039a705ef46b20
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "@langchain/openai@npm:1.4.4"
+  dependencies:
+    js-tiktoken: "npm:^1.0.12"
+    openai: "npm:^6.32.0"
+    zod: "npm:^3.25.76 || ^4"
+  peerDependencies:
+    "@langchain/core": ^1.1.39
+  checksum: 10/eb7dc260681297ba5c235a919edc585c580a1e639dbff81ba81ebd2aad0305154318f563adaac60f90f9374d2b7c74cddaf45fa5ee4e6ef6b70d0d9287935e32
   languageName: node
   linkType: hard
 
@@ -7894,6 +7944,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-schema-to-ts@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "json-schema-to-ts@npm:3.1.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.18.3"
+    ts-algebra: "npm:^2.0.0"
+  checksum: 10/9fd0490279d36ff8b4604cc10632df05e4e5f5ee1d0a77841c927623fc1e636c47eb4ace488018c4e9a2e7e5dde5520d0870e06dfc84b930d9c98c6eacd0f041
+  languageName: node
+  linkType: hard
+
 "json-schema-traverse@npm:^1.0.0":
   version: 1.0.0
   resolution: "json-schema-traverse@npm:1.0.0"
@@ -9258,6 +9318,23 @@ __metadata:
     is-inside-container: "npm:^1.0.0"
     wsl-utils: "npm:^0.1.0"
   checksum: 10/e6ad9474734eac3549dcc7d85e952394856ccaee48107c453bd6a725b82e3b8ed5f427658935df27efa76b411aeef62888edea8a9e347e8e7c82632ec966b30e
+  languageName: node
+  linkType: hard
+
+"openai@npm:^6.32.0":
+  version: 6.34.0
+  resolution: "openai@npm:6.34.0"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.25 || ^4.0
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10/48990878f20c1fcad60acde758749ca92639388194ddb9752bd112cd13a20484bf52f64e614520f5f13c04bdfd566e2f80b778771e4da5a66b0e95a1f9738b0d
   languageName: node
   linkType: hard
 
@@ -11452,6 +11529,13 @@ __metadata:
   version: 2.2.0
   resolution: "trough@npm:2.2.0"
   checksum: 10/999c1cb3db6ec63e1663f911146a90125065da37f66ba342b031d53edb22a62f56c1f934bbc61a55b2b29dd74207544cfd78875b414665c1ffadcd9a9a009eeb
+  languageName: node
+  linkType: hard
+
+"ts-algebra@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "ts-algebra@npm:2.0.0"
+  checksum: 10/b970eef64ca9594a77337e03b9c1732c1b7a0d2c4d316638b654e921a47b40c4cc42f41821445e9e54408d5dfdf4ecca27ffa59554373033b9c92dee8b52066d
   languageName: node
   linkType: hard
 

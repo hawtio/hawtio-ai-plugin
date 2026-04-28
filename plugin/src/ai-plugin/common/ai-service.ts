@@ -1,12 +1,14 @@
+import { ChatAnthropic } from '@langchain/anthropic'
 import { BaseLanguageModelInput } from '@langchain/core/language_models/base'
 import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { ToolCall } from '@langchain/core/messages/tool'
 import { Runnable } from '@langchain/core/runnables'
 import { DynamicStructuredTool } from '@langchain/core/tools'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
-import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama'
+import { ChatOllama } from '@langchain/ollama'
+import { ChatOpenAI } from '@langchain/openai'
 import { log } from '../jmx-ai/globals'
-import { AiModel, MODELS } from './ai-model'
+import { AiModel } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
 
 const TOOLS: DynamicStructuredTool[] = [] as const
@@ -23,6 +25,8 @@ export type MessageWithThink = {
   think?: string
 }
 
+export type LLM = ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatOllama
+
 export interface IAiService {
   reset(model: AiModel): void
   chat(message: string): Promise<AIMessage | string>
@@ -32,8 +36,8 @@ export interface IAiService {
 
 class AiService implements IAiService {
   private model?: AiModel
-  private llm?: ChatGoogleGenerativeAI | ChatOllama
-  private llmWithTools?: Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions>
+  private llm?: LLM
+  private llmWithTools?: Runnable<BaseLanguageModelInput, AIMessageChunk>
   private messages: BaseMessage[] = []
 
   reset(model: AiModel): void {
@@ -46,7 +50,23 @@ class AiService implements IAiService {
     const { token } = aiPreferencesService.loadOptions()
     this.model = model
     try {
-      switch (this.model.type) {
+      switch (this.model.provider) {
+        case 'openai':
+          this.llm = new ChatOpenAI({
+            model: this.model.id,
+            apiKey: token,
+            temperature: 0,
+            streaming: false,
+          })
+          break
+        case 'anthropic':
+          this.llm = new ChatAnthropic({
+            model: this.model.id,
+            apiKey: token,
+            temperature: 0,
+            streaming: false,
+          })
+          break
         case 'google-genai':
           this.llm = new ChatGoogleGenerativeAI({
             model: this.model.id,
@@ -65,26 +85,20 @@ class AiService implements IAiService {
     } catch (error) {
       // Mostly token is missing/invalid
       log.warn('Error initialising AI model:', error)
+      this.llm = undefined
     }
+    this.llmWithTools = undefined
     if (TOOLS.length !== 0 && this.model.tool) {
       this.llmWithTools = this.llm?.bindTools(TOOLS)
     }
   }
 
-  private getLlm():
-    | ChatGoogleGenerativeAI
-    | ChatOllama
-    | Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOllamaCallOptions>
-    | undefined {
+  private getLlm(): LLM | Runnable<BaseLanguageModelInput, AIMessageChunk> | undefined {
     if (!this.model || !this.llm) {
       const { model } = aiPreferencesService.loadOptions()
-      const modelObj = MODELS.find(m => m.id === model) ?? MODELS[0]!
-      this.reset(modelObj)
+      this.reset(model)
     }
-    if (this.llmWithTools) {
-      return this.llmWithTools
-    }
-    return this.llm
+    return this.llmWithTools ?? this.llm
   }
 
   async invoke(messages: BaseMessage[]): Promise<AIMessage | string> {
