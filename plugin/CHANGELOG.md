@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.6](///compare/v0.1.5...v0.1.6) (2026-05-01)
+
+
+### Bug Fixes
+
+* make attribute modal open automatically after diagnosis finished 06725b6
+
 ## [0.1.5](///compare/v0.1.1...v0.1.5) (2026-05-01)
 
 

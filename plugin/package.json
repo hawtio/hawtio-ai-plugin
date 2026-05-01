@@ -1,6 +1,6 @@
 {
   "name": "@hawtio/ai-plugin",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Hawtio AI plugin",
   "main": "./dist/index.js",
   "license": "Apache-2.0",
