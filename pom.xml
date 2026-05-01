@@ -7,6 +7,8 @@
   <packaging>pom</packaging>
   <version>0.2-SNAPSHOT</version>
   <name>${project.artifactId}</name>
+  <description>Hawtio AI Plugin :: Parent</description>
+  <url>https://hawt.io/</url>
 
   <licenses>
     <license>
@@ -15,6 +17,14 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <developers>
+    <developer>
+      <name>Tadayoshi Sato</name>
+      <email>sato.tadayoshi@gmail.com</email>
+      <url>https://github.com/tadayosi</url>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:git@github.com:hawtio/hawtio-ai-plugin.git</connection>

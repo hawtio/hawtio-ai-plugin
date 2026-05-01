@@ -10,6 +10,7 @@
 
   <artifactId>hawtio-ai-plugin-test-app</artifactId>
   <name>${project.artifactId}</name>
+  <description>Hawtio AI Plugin :: Test Application</description>
 
   <dependencyManagement>
     <dependencies>

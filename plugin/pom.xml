@@ -10,6 +10,7 @@
 
   <artifactId>hawtio-ai-plugin</artifactId>
   <name>${project.artifactId}</name>
+  <description>Hawtio AI Plugin</description>
 
   <properties>
     <plugin.path>${project.basedir}</plugin.path>
