@@ -1542,15 +1542,15 @@ __metadata:
   linkType: hard
 
 "@langchain/openai@npm:^1.4.4":
-  version: 1.4.4
-  resolution: "@langchain/openai@npm:1.4.4"
+  version: 1.4.5
+  resolution: "@langchain/openai@npm:1.4.5"
   dependencies:
     js-tiktoken: "npm:^1.0.12"
-    openai: "npm:^6.32.0"
+    openai: "npm:^6.34.0"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.1.39
-  checksum: 10/eb7dc260681297ba5c235a919edc585c580a1e639dbff81ba81ebd2aad0305154318f563adaac60f90f9374d2b7c74cddaf45fa5ee4e6ef6b70d0d9287935e32
+    "@langchain/core": ^1.1.42
+  checksum: 10/c7e4947c515be4956aac9280bd41be7f6db349e30d6efa910248d6379074ea488407af1551b1224dd3c96f6928389e6e4d21833e836cb15f1e602abd4769d3ec
   languageName: node
   linkType: hard
 
@@ -9321,9 +9321,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^6.32.0":
-  version: 6.34.0
-  resolution: "openai@npm:6.34.0"
+"openai@npm:^6.34.0":
+  version: 6.35.0
+  resolution: "openai@npm:6.35.0"
   peerDependencies:
     ws: ^8.18.0
     zod: ^3.25 || ^4.0
@@ -9334,7 +9334,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10/48990878f20c1fcad60acde758749ca92639388194ddb9752bd112cd13a20484bf52f64e614520f5f13c04bdfd566e2f80b778771e4da5a66b0e95a1f9738b0d
+  checksum: 10/f5a9ddfed9113de6f63a7a91c8ba8927d52cf1d19894c44d9159c3f668a8531782cc21c710165f7cf0a2ce93b0d882755bc948986d804cce7679125d4dffa7b0
   languageName: node
   linkType: hard
 
