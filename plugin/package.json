@@ -14,9 +14,9 @@
     "test": "jest --passWithNoTests",
     "format:check": "yarn prettier --check .",
     "format:fix": "yarn prettier --write .",
-    "replace-version": "replace __PACKAGE_VERSION_PLACEHOLDER__ $npm_package_version -r --include=\"*.js\"",
+    "replace-version": "replace __PACKAGE_VERSION_PLACEHOLDER__ -r --include=\"*.js\"",
     "release": "commit-and-tag-version",
-    "prepack": "yarn build:tsup && yarn replace-version ./dist"
+    "prepack": "yarn build:tsup && yarn replace-version $npm_package_version ./dist"
   },
   "dependencies": {
     "@hawtio/react": "^2.2.0",
