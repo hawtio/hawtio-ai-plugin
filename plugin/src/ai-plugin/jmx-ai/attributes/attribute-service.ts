@@ -1,5 +1,11 @@
 import { AttributeValues, eventService, jolokiaService } from '@hawtio/react'
-import { JolokiaErrorResponse, JolokiaRequest, JolokiaSuccessResponse, RequestOptions } from 'jolokia.js'
+import {
+  JolokiaErrorResponse,
+  JolokiaFetchErrorResponse,
+  JolokiaRequest,
+  JolokiaSuccessResponse,
+  RequestOptions,
+} from 'jolokia.js'
 import { log } from '../globals'
 import { escapeMBean } from '../util'
 
@@ -25,7 +31,10 @@ class AttributeService {
     callback(attrs)
   }
 
-  async register(request: JolokiaRequest, callback: (response: JolokiaSuccessResponse | JolokiaErrorResponse) => void) {
+  async register(
+    request: JolokiaRequest,
+    callback: (response: JolokiaSuccessResponse | JolokiaErrorResponse | JolokiaFetchErrorResponse) => void,
+  ) {
     const handle = await jolokiaService.register(this.setupConfig(request), callback)
     log.debug('Register handle:', handle)
     this.handles.push(handle)

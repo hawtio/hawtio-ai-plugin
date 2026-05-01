@@ -17,7 +17,7 @@ import {
 } from '@patternfly/react-core'
 import { MonitoringIcon } from '@patternfly/react-icons'
 import { Table, Tbody, Td, Th, Thead, ThProps, Tr } from '@patternfly/react-table'
-import Jolokia from 'jolokia.js'
+import Jolokia, { JolokiaErrorResponse, JolokiaFetchErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { aiService } from '../../common/ai-service'
 import { log } from '../globals'
@@ -49,12 +49,15 @@ export const Attributes: React.FC = () => {
       setIsReading(false)
     })
 
-    attributeService.register({ type: 'read', mbean: objectName }, response => {
-      if (!Jolokia.isError(response)) {
-        log.debug('Scheduler - Attributes:', response.value)
-        setAttributes(response.value as AttributeValues)
-      }
-    })
+    attributeService.register(
+      { type: 'read', mbean: objectName },
+      (response: JolokiaSuccessResponse | JolokiaErrorResponse | JolokiaFetchErrorResponse) => {
+        if (response && !Jolokia.isError(response as JolokiaSuccessResponse | JolokiaErrorResponse)) {
+          log.debug('Scheduler - Attributes:', (response as JolokiaSuccessResponse).value)
+          setAttributes((response as JolokiaSuccessResponse).value as AttributeValues)
+        }
+      },
+    )
 
     return () => attributeService.unregisterAll()
   }, [selectedNode])

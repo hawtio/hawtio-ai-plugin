@@ -8,7 +8,7 @@ import {
 } from '@hawtio/react'
 import { Panel } from '@patternfly/react-core'
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
-import { JolokiaErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'
+import { JolokiaErrorResponse, JolokiaFetchErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { humanizeLabels } from '../util'
 import './AttributeTable.css'
@@ -66,14 +66,17 @@ export const AttributeTable: React.FunctionComponent = () => {
       if (!node || !node?.objectName) return
 
       const mbean = node.objectName
-      attributeService.register({ type: 'read', mbean }, (response: JolokiaSuccessResponse | JolokiaErrorResponse) => {
-        if ('value' in response) {
-          setAttributesList(attributesList => {
-            attributesList[mbean] = response.value as AttributeValues
-            return { ...attributesList }
-          })
-        }
-      })
+      attributeService.register(
+        { type: 'read', mbean },
+        (response: JolokiaSuccessResponse | JolokiaErrorResponse | JolokiaFetchErrorResponse) => {
+          if (response && typeof response === 'object' && 'value' in response) {
+            setAttributesList(attributesList => {
+              attributesList[mbean] = (response as JolokiaSuccessResponse).value as AttributeValues
+              return { ...attributesList }
+            })
+          }
+        },
+      )
     }
 
     const setReadingJobs = async (currentSelection: MBeanNode): Promise<void> => {
