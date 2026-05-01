@@ -102,6 +102,17 @@ export const Attributes: React.FC = () => {
     }
   }
 
+  const showDiagnosisResult = () => {
+    if (!isModalOpen && Object.keys(attributes).length > 0) {
+      if (!isAttributeSelected) {
+        const name = Object.keys(attributes).sort((a, b) => (a > b ? 1 : -1))[0]!
+        setSelected({ name, value: String(attributes[name]) })
+        setIsAttributeSelected(true)
+      }
+      setIsModalOpen(true)
+    }
+  }
+
   const getSortParams = (): ThProps['sort'] => ({
     sortBy: {
       index: 0,
@@ -129,11 +140,7 @@ export const Attributes: React.FC = () => {
 
   const attributesTable = (
     <div id='attribute-table-with-panel'>
-      <AiJmxToolbar
-        attributes={attributes}
-        setAiMessage={setAiMessage}
-        onDiagnosisFinished={() => setIsModalOpen(true)}
-      />
+      <AiJmxToolbar attributes={attributes} setAiMessage={setAiMessage} onDiagnosisFinished={showDiagnosisResult} />
       <Table aria-label='Attributes' variant='compact'>
         <Thead>
           <Tr>
