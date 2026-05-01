@@ -100,9 +100,6 @@
   <profiles>
     <profile>
       <id>release</id>
-      <modules>
-        <module>plugin</module>
-      </modules>
       <build>
         <plugins>
           <plugin>
