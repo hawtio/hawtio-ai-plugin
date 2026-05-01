@@ -41,7 +41,7 @@
 
     <!-- Versions -->
     <hawtio-version>5.1.0</hawtio-version>
-    <spring-boot-version>4.0.5</spring-boot-version>
+    <spring-boot-version>4.0.6</spring-boot-version>
     <node-version>v24.14.1</node-version>
     <yarn-version>v1.22.22</yarn-version>
 
