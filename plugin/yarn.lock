@@ -1459,14 +1459,13 @@ __metadata:
   linkType: hard
 
 "@langchain/google-genai@npm:^2.1.26":
-  version: 2.1.26
-  resolution: "@langchain/google-genai@npm:2.1.26"
+  version: 2.1.29
+  resolution: "@langchain/google-genai@npm:2.1.29"
   dependencies:
     "@google/generative-ai": "npm:^0.24.0"
-    uuid: "npm:^11.1.0"
   peerDependencies:
-    "@langchain/core": ^1.1.33
-  checksum: 10/d36d6fd719a1e2544dccd2b45b30fb69c849087d000f3876eb359b2a8d2631e9f76b75cd517bafb6e30321545b05fc0dee5505f4383aca375f0174a5ab470c39
+    "@langchain/core": ^1.1.42
+  checksum: 10/d2d434ebb2088c0fc499110df262e0f1958f2c8f00511a40970001b66ac76e9d21e495f9e89f6b775f15b8438eda331b58769d9dbc715d8d0a2e434527f1d704
   languageName: node
   linkType: hard
 
