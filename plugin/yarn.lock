@@ -707,7 +707,7 @@ __metadata:
     "@hawtio/backend-middleware": "npm:^1.0.8"
     "@hawtio/react": "npm:^2.2.0"
     "@langchain/anthropic": "npm:^1.3.27"
-    "@langchain/core": "npm:^1.1.41"
+    "@langchain/core": "npm:^1.1.46"
     "@langchain/google-genai": "npm:^2.1.26"
     "@langchain/ollama": "npm:^1.2.6"
     "@langchain/openai": "npm:^1.4.4"
@@ -1439,22 +1439,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:^1.1.41":
-  version: 1.1.41
-  resolution: "@langchain/core@npm:1.1.41"
+"@langchain/core@npm:^1.1.46":
+  version: 1.1.46
+  resolution: "@langchain/core@npm:1.1.46"
   dependencies:
     "@cfworker/json-schema": "npm:^4.0.2"
     "@standard-schema/spec": "npm:^1.1.0"
-    ansi-styles: "npm:^5.0.0"
-    camelcase: "npm:6"
-    decamelize: "npm:1.2.0"
     js-tiktoken: "npm:^1.0.12"
     langsmith: "npm:>=0.5.0 <1.0.0"
     mustache: "npm:^4.2.0"
     p-queue: "npm:^6.6.2"
-    uuid: "npm:^11.1.0"
     zod: "npm:^3.25.76 || ^4"
-  checksum: 10/0e270fbeb66aefd087729962bdd6f9632725fb702dcf55f1b18fd9fc0ebab34e5f93ce6a500e325198084306e49ad14b91ee74629fc6ebc19a234ea595d89774
+  checksum: 10/a30431fd517189b530db47b2668dd84ea3527ff8282d0b0ed56bb06627d1b7d5ce9cdf7fc13d5dfa548d0ffb20d8ed89616bdfd15b213949c03c610beb1fcaac
   languageName: node
   linkType: hard
 
@@ -3658,7 +3654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-styles@npm:^5.0.0, ansi-styles@npm:^5.2.0":
+"ansi-styles@npm:^5.2.0":
   version: 5.2.0
   resolution: "ansi-styles@npm:5.2.0"
   checksum: 10/d7f4e97ce0623aea6bc0d90dcd28881ee04cba06c570b97fd3391bd7a268eedfd9d5e2dd4fdcbdd82b8105df5faf6f24aaedc08eaf3da898e702db5948f63469
@@ -4167,17 +4163,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camelcase@npm:6, camelcase@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "camelcase@npm:6.3.0"
-  checksum: 10/8c96818a9076434998511251dcb2761a94817ea17dbdc37f47ac080bd088fc62c7369429a19e2178b993497132c8cbcf5cc1f44ba963e76782ba469c0474938d
-  languageName: node
-  linkType: hard
-
 "camelcase@npm:^5.0.0, camelcase@npm:^5.3.1":
   version: 5.3.1
   resolution: "camelcase@npm:5.3.1"
   checksum: 10/e6effce26b9404e3c0f301498184f243811c30dfe6d0b9051863bd8e4034d09c8c2923794f280d6827e5aa055f6c434115ff97864a16a963366fb35fd673024b
+  languageName: node
+  linkType: hard
+
+"camelcase@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "camelcase@npm:6.3.0"
+  checksum: 10/8c96818a9076434998511251dcb2761a94817ea17dbdc37f47ac080bd088fc62c7369429a19e2178b993497132c8cbcf5cc1f44ba963e76782ba469c0474938d
   languageName: node
   linkType: hard
 
@@ -5246,7 +5242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decamelize@npm:1.2.0, decamelize@npm:^1.1.0, decamelize@npm:^1.2.0":
+"decamelize@npm:^1.1.0, decamelize@npm:^1.2.0":
   version: 1.2.0
   resolution: "decamelize@npm:1.2.0"
   checksum: 10/ad8c51a7e7e0720c70ec2eeb1163b66da03e7616d7b98c9ef43cce2416395e84c1e9548dd94f5f6ffecfee9f8b94251fc57121a8b021f2ff2469b2bae247b8aa
