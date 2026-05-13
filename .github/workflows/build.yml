@@ -39,8 +39,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
+          cache-dependency-path: 'plugin/yarn.lock'
       - name: Enable yarn v4
         run: |
+          cd plugin/
           corepack enable
           yarn -v
       - name: Build with tsup
