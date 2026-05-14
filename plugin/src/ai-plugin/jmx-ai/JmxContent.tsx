@@ -1,10 +1,10 @@
-import { Chart, JmxContentMBeans, MBeanNode, Operations } from '@hawtio/react'
+import { AttributeTable, Chart, JmxContentMBeans, MBeanNode, Operations } from '@hawtio/react'
 import { Content, EmptyState, Nav, NavItem, NavList, PageGroup, PageSection, Title } from '@patternfly/react-core'
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
 import React, { useContext } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import './JmxContent.css'
-import { Attributes, AttributeTable } from './attributes'
+import { Attributes } from './attributes'
 import { MBeanTreeContext, pluginPathWithNodeId } from './context'
 import { pluginPath } from './globals'
 

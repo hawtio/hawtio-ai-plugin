@@ -24,7 +24,6 @@ import { log } from '../globals'
 import { isObject, objectSorter } from '../util'
 import { attributeService } from './attribute-service'
 import { AttributeModal } from './AttributeModal'
-import './AttributeTable.css'
 
 export const Attributes: React.FC = () => {
   const { selectedNode } = useContext(PluginNodeSelectionContext)
