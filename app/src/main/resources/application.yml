@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hawtio,jolokia
+      base-path: /
+
+spring:
+  jmx:
+    enabled: true
+
+logging:
+  level:
+    '[io.hawt]': INFO
+    '[org.springframework]': WARN
+    '[org.apache.camel]': INFO
+
+hawtio:
+  authenticationEnabled: false
+  http:
+    csp:
+      connectSrc: https://generativelanguage.googleapis.com
+
+camel:
+  main:
+    name: TestApp
+    # Required to enable Camel plugin's Endpoints (in/out) statistics tab
+    endpoint-runtime-statistics-enabled: true
+    jmx-management-statistics-level: Extended
+    # Required to enable browsing inflight exchanges in Camel plugin's Exchanges tab
+    inflight-repository-browse-enabled: true
+
+# Application settings
+quartz:
+  cron: 0/10 * * * * ?
+  repeatInterval: 10000

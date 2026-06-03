@@ -106,7 +106,7 @@ export const AttributeModal: React.FC<{
     )
   }
 
-  const diagnosis: MessageWithThink = aiMessage ? aiService.toBotMessage(aiMessage) : { content: '' }
+  const diagnosis: MessageWithThink = aiMessage ? aiService.extractThink(aiMessage) : { content: '' }
 
   return (
     <DrawerPanelContent isResizable>

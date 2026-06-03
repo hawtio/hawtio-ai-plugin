@@ -1,10 +1,5 @@
-import {
-  AttributeValues,
-  eventService,
-  HawtioEmptyCard,
-  HawtioLoadingCard,
-  PluginNodeSelectionContext,
-} from '@hawtio/react'
+import { AttributeModal, AttributeValues, HawtioEmptyCard, HawtioLoadingCard } from '@hawtio/react'
+import { MessageProps } from '@patternfly/chatbot/dist/esm/Message'
 import {
   Button,
   Drawer,
@@ -20,21 +15,21 @@ import { Table, Tbody, Td, Th, Thead, ThProps, Tr } from '@patternfly/react-tabl
 import Jolokia, { JolokiaErrorResponse, JolokiaFetchErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { aiService } from '../../common/ai-service'
+import { ChatbotContext, MBeanTreeContext } from '../context'
 import { log } from '../globals'
+import { jmxAiService } from '../jmx-ai-service'
 import { isObject, objectSorter } from '../util'
 import { attributeService } from './attribute-service'
-import { AttributeModal } from './AttributeModal'
+import { ThinkInfo, ToolCallsApprove, ToolCallsInfo } from '../DiagnosisChatbot'
 
 export const Attributes: React.FC = () => {
-  const { selectedNode } = useContext(PluginNodeSelectionContext)
+  const { selectedNode } = useContext(MBeanTreeContext)
   const [attributes, setAttributes] = useState<AttributeValues>({})
   const [isReading, setIsReading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isAttributeSelected, setIsAttributeSelected] = useState(false)
-  const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>('asc')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selected, setSelected] = useState({ name: '', value: '' })
   const [reload, setReload] = useState(false)
-  const [aiMessage, setAiMessage] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (!selectedNode || !selectedNode.mbean || !selectedNode.objectName) {
@@ -52,7 +47,6 @@ export const Attributes: React.FC = () => {
       { type: 'read', mbean: objectName },
       (response: JolokiaSuccessResponse | JolokiaErrorResponse | JolokiaFetchErrorResponse) => {
         if (response && !Jolokia.isError(response as JolokiaSuccessResponse | JolokiaErrorResponse)) {
-          log.debug('Scheduler - Attributes:', (response as JolokiaSuccessResponse).value)
           setAttributes((response as JolokiaSuccessResponse).value as AttributeValues)
         }
       },
@@ -95,19 +89,7 @@ export const Attributes: React.FC = () => {
 
   const selectAttribute = (attribute: { name: string; value: string }) => {
     setSelected(attribute)
-    setIsAttributeSelected(true)
     if (!isModalOpen) {
-      setIsModalOpen(true)
-    }
-  }
-
-  const showDiagnosisResult = () => {
-    if (!isModalOpen && Object.keys(attributes).length > 0) {
-      if (!isAttributeSelected) {
-        const name = Object.keys(attributes).sort((a, b) => (a > b ? 1 : -1))[0]!
-        setSelected({ name, value: String(attributes[name]) })
-        setIsAttributeSelected(true)
-      }
       setIsModalOpen(true)
     }
   }
@@ -126,20 +108,16 @@ export const Attributes: React.FC = () => {
 
   const panelContent = (
     <AttributeModal
-      isAttributeSelected={isAttributeSelected}
-      onClose={() => {
-        setIsModalOpen(false)
-        setIsAttributeSelected(false)
-      }}
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
       onUpdate={() => setReload(true)}
       input={selected}
-      aiMessage={aiMessage}
     />
   )
 
   const attributesTable = (
     <div id='attribute-table-with-panel'>
-      <AiJmxToolbar attributes={attributes} setAiMessage={setAiMessage} onDiagnosisFinished={showDiagnosisResult} />
+      <AiJmxToolbar attributes={attributes} />
       <Table aria-label='Attributes' variant='compact'>
         <Thead>
           <Tr>
@@ -165,9 +143,10 @@ export const Attributes: React.FC = () => {
       </Table>
     </div>
   )
+
   return (
     <Panel>
-      <Drawer isExpanded={isModalOpen} className={'pf-m-inline-on-2xl'}>
+      <Drawer isExpanded={isModalOpen} className='pf-m-inline-on-2xl'>
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody hasPadding>{attributesTable}</DrawerContentBody>
         </DrawerContent>
@@ -178,35 +157,41 @@ export const Attributes: React.FC = () => {
 
 const AiJmxToolbar: React.FC<{
   attributes: AttributeValues
-  setAiMessage: (message: string) => void
-  onDiagnosisFinished: () => void
-}> = ({ attributes, setAiMessage, onDiagnosisFinished }) => {
-  const { selectedNode } = useContext(PluginNodeSelectionContext)
+}> = ({ attributes }) => {
+  const { selectedNode } = useContext(MBeanTreeContext)
+  //const { username } = useContext(PageContext) // TODO: Unavailable until @hawtio/react 2.3.0
+  const username = 'user'
+  const { setMessages, setAnnouncement, setIsChatbotOpen } = useContext(ChatbotContext)
 
   if (!selectedNode || !selectedNode.mbean || !selectedNode.objectName) {
     return null
   }
   const { objectName } = selectedNode
 
-  const diagnose = () => {
-    eventService.notify({ type: 'info', message: 'Diagnosing...' })
+  const diagnose = async () => {
+    setIsChatbotOpen(true)
     const attrsValue = JSON.stringify(attributes)
     log.debug('Attributes:', attrsValue)
-    aiService.diagnose(objectName, attrsValue).then(response => {
-      if (typeof response === 'string') {
-        eventService.notify({ type: 'danger', message: response })
-        return
-      }
-      const message = response.content as string
-      if (!message) {
-        eventService.notify({ type: 'warning', message: 'No diagnosis available' })
-        return
-      }
-      log.debug('Diagnosis:', message)
-      eventService.notify({ type: 'success', message: 'Diagnosis completed' })
-      setAiMessage(message)
-      onDiagnosisFinished()
-    })
+
+    const systemMessage = jmxAiService.systemMessage()
+    const diagnoseMessage = jmxAiService.diagnoseMessage(objectName, attrsValue)
+    const newMessages: MessageProps[] = []
+    newMessages.push(aiService.createUserMessage(username, diagnoseMessage))
+    newMessages.push(aiService.createLoadingBotMessage())
+    setMessages(newMessages)
+    setAnnouncement('Diagnosis in progress...')
+    log.debug('diagnose - new messages:', newMessages)
+
+    const answer = await aiService.newChat(diagnoseMessage, systemMessage)
+    const loadedMessages: MessageProps[] = []
+    loadedMessages.push(...newMessages)
+    log.debug('diagnose - loaded messages:', loadedMessages)
+    // Remove the loading message
+    loadedMessages.pop()
+    const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
+    loadedMessages.push(botMessage)
+    setMessages(loadedMessages)
+    setAnnouncement('Diagnosis complete.')
   }
 
   return (
@@ -214,7 +199,7 @@ const AiJmxToolbar: React.FC<{
       <ToolbarContent>
         <ToolbarItem>
           <Button variant='primary' size='sm' icon={<MonitoringIcon />} onClick={diagnose}>
-            &nbsp;Diagnose
+            Diagnose
           </Button>
         </ToolbarItem>
       </ToolbarContent>

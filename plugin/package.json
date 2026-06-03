@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "start": "webpack serve --mode development",
+    "build": "yarn build:webpack --progress",
     "build:webpack": "webpack --mode production",
     "build:tsup": "tsup --clean",
     "test": "jest --passWithNoTests",
@@ -25,6 +26,7 @@
     "@langchain/google-genai": "^2.1.26",
     "@langchain/ollama": "^1.2.6",
     "@langchain/openai": "^1.4.4",
+    "@patternfly/chatbot": "^6.5.0",
     "@patternfly/react-charts": "^8.4.0",
     "@patternfly/react-code-editor": "^6.4.0",
     "@patternfly/react-core": "^6.4.0",
@@ -58,7 +60,7 @@
     "typescript": "^5.9.3",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.0",
-    "webpack-dev-server": "^5.2.3"
+    "webpack-dev-server": "^5.2.4"
   },
   "resolutions": {
     "@module-federation/utilities": "3.1.83"

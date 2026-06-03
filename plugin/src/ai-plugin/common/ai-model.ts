@@ -31,6 +31,6 @@ export const MODELS: AiModel[] = [
   { id: 'llama3.2:latest', name: 'Llama 3.2', tool: true, provider: 'ollama' },
   { id: 'phi4:latest', name: 'Phi 4', tool: false, provider: 'ollama' },
   { id: 'phi3.5:latest', name: 'Phi 3.5', tool: false, provider: 'ollama' },
-  { id: 'qwen3:4b', name: 'Qwen 3 4B', tool: true, provider: 'ollama' },
-  { id: 'qwen3:latest', name: 'Qwen 3', tool: true, provider: 'ollama' },
+  { id: 'qwen3.5:4b', name: 'Qwen 3.5 4B', tool: true, provider: 'ollama' },
+  { id: 'qwen3.5:latest', name: 'Qwen 3.5', tool: true, provider: 'ollama' },
 ] as const

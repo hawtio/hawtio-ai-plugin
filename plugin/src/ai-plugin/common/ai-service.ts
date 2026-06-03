@@ -7,9 +7,15 @@ import { DynamicStructuredTool } from '@langchain/core/tools'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatOllama } from '@langchain/ollama'
 import { ChatOpenAI } from '@langchain/openai'
+import { MessageExtraContent, MessageProps } from '@patternfly/chatbot/dist/esm/Message'
+import patternflyAvatar from '@patternfly/chatbot/patternfly-docs/content/extensions/chatbot/examples/Messages/patternfly_avatar.jpg'
+import userAvatar from '@patternfly/react-core/dist/styles/assets/images/img_avatar-light.svg'
+import { ReactNode } from 'react'
 import { log } from '../jmx-ai/globals'
 import { AiModel } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
+
+const BOT_NAME = 'Hawtio AI'
 
 const TOOLS: DynamicStructuredTool[] = [] as const
 const TOOLS_BY_NAME: Record<string, DynamicStructuredTool> = TOOLS.reduce(
@@ -29,9 +35,20 @@ export type LLM = ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatOlla
 
 export interface IAiService {
   reset(model: AiModel): void
+  getModel(): AiModel | undefined
+  newChat(message: string, system?: string): Promise<AIMessage | string>
   chat(message: string): Promise<AIMessage | string>
   invokeTools(toolCalls: ToolCall[]): Promise<AIMessage | string>
-  toBotMessage(message: string): MessageWithThink
+  createUserMessage(name: string, content: string): MessageProps
+  createLoadingBotMessage(): MessageProps
+  createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
+  extractThink(message: string): MessageWithThink
+  toBotMessage(
+    answer: AIMessage | string,
+    thinkInfo: (think: string) => ReactNode,
+    toolCallsInfo: (call: ToolCall, index: number) => ReactNode,
+    toolCallsApprove: (toolCalls: ToolCall[]) => ReactNode,
+  ): MessageProps
 }
 
 class AiService implements IAiService {
@@ -45,8 +62,8 @@ class AiService implements IAiService {
       return
     }
     log.info('AI model to use:', model.id)
-    // Should we keep the message history when changing model?
-    //this.messages = []
+    // Reset the current message record
+    this.messages = []
     const { token } = aiPreferencesService.loadOptions()
     this.model = model
     try {
@@ -101,7 +118,12 @@ class AiService implements IAiService {
     return this.llmWithTools ?? this.llm
   }
 
-  async invoke(messages: BaseMessage[]): Promise<AIMessage | string> {
+  getModel(): AiModel | undefined {
+    this.getLlm()
+    return this.model
+  }
+
+  private async invoke(messages: BaseMessage[]): Promise<AIMessage | string> {
     // Lazy init model and llm
     const llm = this.getLlm()
     log.debug('Chatting with', this.model?.id, ':', messages)
@@ -123,17 +145,23 @@ class AiService implements IAiService {
     }
   }
 
-  async chat(message: string): Promise<AIMessage | string> {
-    return this.invoke([new HumanMessage(message)])
+  newChat(message: string, system?: string): Promise<AIMessage | string> {
+    if (system) {
+      this.messages = [new SystemMessage(system)]
+    } else {
+      this.messages = []
+    }
+    return this.chat(message)
   }
 
-  toBotMessage(message: string): MessageWithThink {
-    // extract inside <think>...</think> from message
-    const think = message.match(/<think>(.*?)<\/think>/s)?.[1]?.trim()
-    // remove <think>...</think> from message
-    const content = message.replace(/<think>.*?<\/think>/s, '')
-    log.debug('Response - content:', content, 'think:', think)
-    return { content, think }
+  async chat(message: string): Promise<AIMessage | string> {
+    this.messages.push(new HumanMessage(message))
+    const answer = await this.invoke(this.messages)
+    if (typeof answer !== 'string') {
+      // Non-error answer
+      this.messages.push(answer)
+    }
+    return answer
   }
 
   async invokeTools(toolCalls: ToolCall[]): Promise<AIMessage | string> {
@@ -158,17 +186,75 @@ class AiService implements IAiService {
     return finalAnswer
   }
 
-  async diagnose(objectName: string, attributes: string): Promise<AIMessage | string> {
-    const system = `You are a helpful assistant diagnosing a JMX MBean based on its attribute values.
-Given the following ObjectName and attribute values, identify any potential issues or anomalies.
-Provide suggestions for further investigation or resolution if applicable.
-Respond in a concise manner.`
+  private generateId(): string {
+    return crypto.randomUUID()
+  }
 
-    const prompt = `ObjectName: ${objectName}
-Attribute values: ${attributes}
-What potential issues or anomalies do you see?`
+  createUserMessage(name: string, content: string): MessageProps {
+    const id = this.generateId()
+    return { id, role: 'user', content, name, avatar: userAvatar }
+  }
 
-    return this.invoke([new SystemMessage(system), new HumanMessage(prompt)])
+  createLoadingBotMessage(): MessageProps {
+    const id = this.generateId()
+    return {
+      id,
+      role: 'bot',
+      name: BOT_NAME,
+      avatar: patternflyAvatar,
+      content: 'API response goes here',
+      isLoading: true,
+    }
+  }
+
+  createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps {
+    const id = this.generateId()
+    return {
+      id,
+      role: 'bot',
+      name: BOT_NAME,
+      avatar: patternflyAvatar,
+      content,
+      extraContent,
+      isLoading: false,
+    }
+  }
+
+  extractThink(message: string): MessageWithThink {
+    // extract inside <think>...</think> from message
+    const think = message.match(/<think>(.*?)<\/think>/s)?.[1]?.trim()
+    // remove <think>...</think> from message
+    const content = message.replace(/<think>.*?<\/think>/s, '')
+    log.debug('extractThink - content:', content, 'think:', think)
+    return { content, think }
+  }
+
+  toBotMessage(
+    answer: AIMessage | string,
+    thinkInfo: (think: string) => ReactNode,
+    toolCallsInfo: (call: ToolCall, index: number) => ReactNode,
+    toolCallsApprove: (toolCalls: ToolCall[]) => ReactNode,
+  ): MessageProps {
+    if (typeof answer === 'string') {
+      // Error
+      return aiService.createBotMessage(`Error: ${answer}`)
+    }
+
+    if (!answer.tool_calls || answer.tool_calls.length === 0) {
+      // No tool calls
+      const { content, think } = aiService.extractThink(answer.content as string)
+      const extraContent = think ? { beforeMainContent: thinkInfo(think) } : undefined
+      return aiService.createBotMessage(content, extraContent)
+    }
+
+    // Tool calls
+    const toolCalls = answer.tool_calls
+    const content = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
+    const extraContent = {
+      beforeMainContent: toolCalls.map(toolCallsInfo),
+      afterMainContent: toolCallsApprove(toolCalls),
+    }
+    return aiService.createBotMessage(content, extraContent)
   }
 }
 
