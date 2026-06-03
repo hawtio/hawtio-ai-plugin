@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.2.0](///compare/v0.1.6...v0.2.0) (2026-06-03)
+
+
+### Features
+
+* integrate diagnose function with PF 6 Chatbot UI component 27c8364, closes #14
+
+
+### Bug Fixes
+
+* build with updated langchain deps 4b2c9fb
+
 ## [0.1.6](///compare/v0.1.5...v0.1.6) (2026-05-01)
 
 
