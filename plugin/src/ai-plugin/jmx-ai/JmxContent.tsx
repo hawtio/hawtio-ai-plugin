@@ -1,16 +1,38 @@
 import { AttributeTable, Chart, JmxContentMBeans, MBeanNode, Operations } from '@hawtio/react'
-import { Content, EmptyState, Nav, NavItem, NavList, PageGroup, PageSection, Title } from '@patternfly/react-core'
+import {
+  Button,
+  Content,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerPanelBody,
+  DrawerPanelContent,
+  EmptyState,
+  Nav,
+  NavItem,
+  NavList,
+  PageGroup,
+  PageSection,
+  Title,
+  Toolbar,
+  ToolbarItem,
+} from '@patternfly/react-core'
+import { right } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core'
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { DiagnosisChatbot } from './DiagnosisChatbot'
 import './JmxContent.css'
 import { Attributes } from './attributes'
-import { MBeanTreeContext, pluginPathWithNodeId } from './context'
+import { ChatbotContext, MBeanTreeContext, pluginPathWithNodeId, useChatbot } from './context'
 import { pluginPath } from './globals'
 
 export const JmxContent: React.FunctionComponent = () => {
   const { selectedNode } = useContext(MBeanTreeContext)
   const { pathname, search } = useLocation()
+  const chatbotContext = useChatbot()
+  const { isChatbotOpen, setIsChatbotOpen } = chatbotContext
+  const drawerRef = useRef<HTMLDivElement>(undefined)
 
   if (!selectedNode) {
     return (
@@ -61,9 +83,20 @@ export const JmxContent: React.FunctionComponent = () => {
     <Route key={nav.id} path={nav.id} element={React.createElement(nav.component)} />
   ))
 
-  return (
+  const jmxAiToolbar = (
+    <Toolbar id='jmx-ai-toolbar' style={{ float: right }}>
+      <ToolbarItem>
+        <Button variant='secondary' size='sm' onClick={() => setIsChatbotOpen(!isChatbotOpen)}>
+          Chat
+        </Button>
+      </ToolbarItem>
+    </Toolbar>
+  )
+
+  const jmxContent = (
     <PageGroup id='jmx-content'>
       <PageSection id='jmx-content-header' hasBodyWrapper={false}>
+        {jmxAiToolbar}
         <Title headingLevel='h1'>{selectedNode.name}</Title>
         <Content component='small'>{selectedNode.objectName}</Content>
       </PageSection>
@@ -87,5 +120,27 @@ export const JmxContent: React.FunctionComponent = () => {
         </Routes>
       </PageSection>
     </PageGroup>
+  )
+
+  const onDrawerExpand = () => {
+    drawerRef.current && drawerRef.current.focus()
+  }
+
+  const panelContent = (
+    <DrawerPanelContent isResizable defaultSize='500px' minSize='200px'>
+      <DrawerPanelBody>
+        <DiagnosisChatbot />
+      </DrawerPanelBody>
+    </DrawerPanelContent>
+  )
+
+  return (
+    <ChatbotContext.Provider value={chatbotContext}>
+      <Drawer isExpanded={isChatbotOpen} isInline onExpand={onDrawerExpand}>
+        <DrawerContent panelContent={panelContent}>
+          <DrawerContentBody>{jmxContent}</DrawerContentBody>
+        </DrawerContent>
+      </Drawer>
+    </ChatbotContext.Provider>
   )
 }
