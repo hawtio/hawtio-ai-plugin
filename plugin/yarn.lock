@@ -4973,8 +4973,8 @@ __metadata:
   linkType: hard
 
 "commit-and-tag-version@npm:^12.7.1":
-  version: 12.7.1
-  resolution: "commit-and-tag-version@npm:12.7.1"
+  version: 12.7.3
+  resolution: "commit-and-tag-version@npm:12.7.3"
   dependencies:
     chalk: "npm:^2.4.2"
     conventional-changelog: "npm:4.0.0"
@@ -4993,7 +4993,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     commit-and-tag-version: bin/cli.js
-  checksum: 10/6458ba7468afb684bc50717f97a240efc3c827b06e19531e0b924e74794bc9dcda6f02a88bce40ecba7806e195ca7dc046a8856da3f0895b85d1bb96d18d2fc8
+  checksum: 10/f57f4b11710de94686c56d9b6675202ece3bbc5f09524c239536f5ec62473348087d853119770190e454bf2979ca8993c8b9f18f7dd55e8cb602b8974b7520d5
   languageName: node
   linkType: hard
 
