@@ -1,4 +1,5 @@
 import { AttributeModal, AttributeValues, HawtioEmptyCard, HawtioLoadingCard } from '@hawtio/react'
+import { PageContext } from '@hawtio/react/ui'
 import { MessageProps } from '@patternfly/chatbot/dist/esm/Message'
 import {
   Button,
@@ -16,11 +17,11 @@ import Jolokia, { JolokiaErrorResponse, JolokiaFetchErrorResponse, JolokiaSucces
 import React, { useContext, useEffect, useState } from 'react'
 import { aiService } from '../../common/ai-service'
 import { ChatbotContext, MBeanTreeContext } from '../context'
+import { ThinkInfo, ToolCallsApprove, ToolCallsInfo } from '../DiagnosisChatbot'
 import { log } from '../globals'
 import { jmxAiService } from '../jmx-ai-service'
 import { isObject, objectSorter } from '../util'
 import { attributeService } from './attribute-service'
-import { ThinkInfo, ToolCallsApprove, ToolCallsInfo } from '../DiagnosisChatbot'
 
 export const Attributes: React.FC = () => {
   const { selectedNode } = useContext(MBeanTreeContext)
@@ -159,8 +160,7 @@ const AiJmxToolbar: React.FC<{
   attributes: AttributeValues
 }> = ({ attributes }) => {
   const { selectedNode } = useContext(MBeanTreeContext)
-  //const { username } = useContext(PageContext) // TODO: Unavailable until @hawtio/react 2.3.0
-  const username = 'user'
+  const { username } = useContext(PageContext)
   const { setMessages, setAnnouncement, setIsChatbotOpen } = useContext(ChatbotContext)
 
   if (!selectedNode || !selectedNode.mbean || !selectedNode.objectName) {

@@ -1,3 +1,4 @@
+import { PageContext } from '@hawtio/react/ui'
 import { ToolCall } from '@langchain/core/messages/tool'
 import Chatbot, { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import ChatbotContent from '@patternfly/chatbot/dist/dynamic/ChatbotContent'
@@ -138,8 +139,7 @@ const DiagnosisChatbotContent: React.FC = () => {
 }
 
 const DiagnosisChatbotFooter: React.FC = () => {
-  //const { username } = useContext(PageContext) // TODO: Unavailable until @hawtio/react 2.3.0
-  const username = 'user'
+  const { username } = useContext(PageContext)
   const { messages, setMessages, setAnnouncement, isSendButtonDisabled, setIsSendButtonDisabled } =
     useContext(ChatbotContext)
   const messagesRef = useRef(messages)
@@ -206,8 +206,7 @@ export const ToolCallsInfo = (call: ToolCall, index: number) => {
 }
 
 export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
-  //const { username } = useContext(PageContext) // TODO: Unavailable until @hawtio/react 2.3.0
-  const username = 'user'
+  const { username } = useContext(PageContext)
   const { messages, setMessages, setAnnouncement, setIsSendButtonDisabled } = useContext(ChatbotContext)
   const messagesRef = useRef(messages)
 
