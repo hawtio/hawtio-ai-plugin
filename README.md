@@ -13,7 +13,7 @@ This is an extension plugin that adds AI functionality to Hawtio. This plugin is
 <dependency>
     <groupId>io.hawt.ai</groupId>
     <artifactId>hawtio-ai-plugin</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
