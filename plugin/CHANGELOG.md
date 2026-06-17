@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.2.1](///compare/v0.2.0...v0.2.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* chat history [#39](undefined/undefined/undefined/issues/39) 401ea48
+* upgrade @hawtio/react to 2.3.0-pre.1 d52e5de
+
 ## [0.2.0](///compare/v0.1.6...v0.2.0) (2026-06-03)
 
 
