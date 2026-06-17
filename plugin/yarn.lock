@@ -711,7 +711,7 @@ __metadata:
     "@langchain/google-genai": "npm:^2.1.26"
     "@langchain/ollama": "npm:^1.2.6"
     "@langchain/openai": "npm:^1.4.4"
-    "@patternfly/chatbot": "npm:^6.5.0"
+    "@patternfly/chatbot": "npm:^6.6.0"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -1819,9 +1819,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/chatbot@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "@patternfly/chatbot@npm:6.5.0"
+"@patternfly/chatbot@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "@patternfly/chatbot@npm:6.6.0"
   dependencies:
     "@patternfly/react-code-editor": "npm:^6.1.0"
     "@patternfly/react-core": "npm:^6.1.0"
@@ -1849,7 +1849,7 @@ __metadata:
       optional: false
     monaco-editor:
       optional: false
-  checksum: 10/c12fb1d3e63f8959c71c307574bcdb7b85be8cde2c7498da13299555cd3ead8d0d96ffe8f71e60306f7701f07ff3b945bb6422251f3564f122b6d830e9d78e10
+  checksum: 10/fb39ba7fdb6cd685d5c632301165d0ecde25a0a7ccfa80ff289bcbbb709d5a75c3aebd5873cf03cc841418d52f2581d4b597089356fa12cb826cd90fd5ed64ac
   languageName: node
   linkType: hard
 

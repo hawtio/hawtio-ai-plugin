@@ -36,9 +36,9 @@ export type LLM = ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatOlla
 export interface IAiService {
   reset(model: AiModel): void
   getModel(): AiModel | undefined
-  newChat(message: string, system?: string): Promise<AIMessage | string>
-  chat(message: string): Promise<AIMessage | string>
-  invokeTools(toolCalls: ToolCall[]): Promise<AIMessage | string>
+  newChat(dialogId: string, message: string, system?: string): Promise<AIMessage | string>
+  chat(dialogId: string, message: string): Promise<AIMessage | string>
+  invokeTools(dialogId: string, toolCalls: ToolCall[]): Promise<AIMessage | string>
   createUserMessage(name: string, content: string): MessageProps
   createLoadingBotMessage(): MessageProps
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
@@ -55,15 +55,15 @@ class AiService implements IAiService {
   private model?: AiModel
   private llm?: LLM
   private llmWithTools?: Runnable<BaseLanguageModelInput, AIMessageChunk>
-  private messages: BaseMessage[] = []
+  private memory: Record<string, BaseMessage[]> = {}
 
   reset(model: AiModel): void {
     if (this.model && this.model.id === model.id && this.llm && (!model.tool || this.llmWithTools)) {
       return
     }
     log.info('AI model to use:', model.id)
-    // Reset the current message record
-    this.messages = []
+    // Reset the current memory
+    this.memory = {}
     const { token } = aiPreferencesService.loadOptions()
     this.model = model
     try {
@@ -145,28 +145,39 @@ class AiService implements IAiService {
     }
   }
 
-  newChat(message: string, system?: string): Promise<AIMessage | string> {
+  newChat(dialogId: string, message: string, system?: string): Promise<AIMessage | string> {
     if (system) {
-      this.messages = [new SystemMessage(system)]
+      this.memory[dialogId] = [new SystemMessage(system)]
     } else {
-      this.messages = []
+      this.memory[dialogId] = []
     }
-    return this.chat(message)
+    return this.chat(dialogId, message)
   }
 
-  async chat(message: string): Promise<AIMessage | string> {
-    this.messages.push(new HumanMessage(message))
-    const answer = await this.invoke(this.messages)
+  async chat(dialogId: string, message: string): Promise<AIMessage | string> {
+    let messages = this.memory[dialogId]
+    if (!messages) {
+      messages = []
+      this.memory[dialogId] = messages
+    }
+    messages.push(new HumanMessage(message))
+    const answer = await this.invoke(messages)
     if (typeof answer !== 'string') {
       // Non-error answer
-      this.messages.push(answer)
+      messages.push(answer)
     }
     return answer
   }
 
-  async invokeTools(toolCalls: ToolCall[]): Promise<AIMessage | string> {
+  async invokeTools(dialogId: string, toolCalls: ToolCall[]): Promise<AIMessage | string> {
     if (!this.llmWithTools) {
       return 'Tool invocation not supported'
+    }
+
+    let messages = this.memory[dialogId]
+    if (!messages) {
+      messages = []
+      this.memory[dialogId] = messages
     }
 
     for (const call of toolCalls) {
@@ -175,14 +186,14 @@ class AiService implements IAiService {
       const toolAnswer = await selectedTool?.invoke(call)
       if (toolAnswer) {
         log.debug('🛠️  ' + call.name + ':', toolAnswer)
-        this.messages.push(toolAnswer)
+        messages.push(toolAnswer)
       }
     }
-    const finalAnswer = await this.llmWithTools.invoke(this.messages)
+    const finalAnswer = await this.llmWithTools.invoke(messages)
     if (finalAnswer) {
-      this.messages.push(finalAnswer)
+      messages.push(finalAnswer)
     }
-    console.debug('Messages>>', this.messages)
+    console.debug('Messages>>', messages)
     return finalAnswer
   }
 

@@ -161,7 +161,7 @@ const AiJmxToolbar: React.FC<{
 }> = ({ attributes }) => {
   const { selectedNode } = useContext(MBeanTreeContext)
   const { username } = useContext(PageContext)
-  const { setMessages, setAnnouncement, setIsChatbotOpen } = useContext(ChatbotContext)
+  const { setAnnouncement, setIsChatbotOpen, updateConversations } = useContext(ChatbotContext)
 
   if (!selectedNode || !selectedNode.mbean || !selectedNode.objectName) {
     return null
@@ -178,11 +178,12 @@ const AiJmxToolbar: React.FC<{
     const newMessages: MessageProps[] = []
     newMessages.push(aiService.createUserMessage(username, diagnoseMessage))
     newMessages.push(aiService.createLoadingBotMessage())
-    setMessages(newMessages)
+    updateConversations(newMessages, `Diagnose ${objectName}`)
     setAnnouncement('Diagnosis in progress...')
     log.debug('diagnose - new messages:', newMessages)
 
-    const answer = await aiService.newChat(diagnoseMessage, systemMessage)
+    const dialogId = newMessages[0]!.id!
+    const answer = await aiService.newChat(dialogId, diagnoseMessage, systemMessage)
     const loadedMessages: MessageProps[] = []
     loadedMessages.push(...newMessages)
     log.debug('diagnose - loaded messages:', loadedMessages)
@@ -190,7 +191,7 @@ const AiJmxToolbar: React.FC<{
     loadedMessages.pop()
     const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
-    setMessages(loadedMessages)
+    updateConversations(loadedMessages)
     setAnnouncement('Diagnosis complete.')
   }
 

@@ -4,6 +4,7 @@ import { MessageProps } from '@patternfly/chatbot/dist/esm/Message'
 import { createContext, Dispatch, useContext, useEffect, useRef, useState } from 'react'
 import { To, useNavigate, useSearchParams } from 'react-router-dom'
 import { log, PARAM_KEY_NODE_ID, pluginName, pluginPath } from './globals'
+import { ChatbotDialog } from './model'
 
 /**
  * Custom React hook for using JMX MBean tree.
@@ -100,34 +101,60 @@ export function pluginPathWithNodeId(
 
 type MBeanTreeContext = {
   tree: MBeanTree
+  loaded: boolean
   selectedNode: MBeanNode | null
   setSelectedNode: (selected: MBeanNode | null) => void
 }
 
 export const MBeanTreeContext = createContext<MBeanTreeContext>({
   tree: MBeanTree.createEmpty(pluginName),
+  loaded: false,
   selectedNode: null,
   setSelectedNode: () => {
     /* no-op */
   },
 })
 
-export type Conversations = Conversation[] | Record<string, Conversation[]>
-
-export const initialConversations: Conversations = {}
-
 /**
  * Custom React hook for using AI Chatbot.
  */
 export function useChatbot(): ChatbotContext {
   const [messages, setMessages] = useState<MessageProps[]>([])
-  const [conversations, setConversations] = useState<Conversations>(initialConversations)
+  const [dialogs, setDialogs] = useState<ChatbotDialog[]>([])
+  const [conversations, setConversations] = useState<Conversation[]>([])
   const [announcement, setAnnouncement] = useState('')
   const [isChatbotOpen, setIsChatbotOpen] = useState(false)
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false)
+
+  const updateConversations = (messages: MessageProps[], summary?: string) => {
+    const dialogId = messages[0]?.id
+    if (!dialogId) {
+      return
+    }
+    setMessages(messages)
+    let dialog = dialogs.find(d => d.id === dialogId)
+    if (dialog) {
+      dialog.setMessages(messages)
+    } else {
+      dialog = new ChatbotDialog(messages, summary)
+      dialogs.push(dialog)
+    }
+    setDialogs([...dialogs])
+    log.debug('Updated dialogs:', dialogs)
+
+    if (!conversations.some(c => c.id === dialogId)) {
+      const conversation = dialog.createConversation()
+      conversations.push(conversation)
+      setConversations([...conversations])
+      log.debug('Updated conversations:', conversations)
+    }
+  }
+
   return {
     messages,
     setMessages,
+    dialogs,
+    setDialogs,
     conversations,
     setConversations,
     announcement,
@@ -136,20 +163,24 @@ export function useChatbot(): ChatbotContext {
     setIsChatbotOpen,
     isSendButtonDisabled,
     setIsSendButtonDisabled,
+    updateConversations,
   }
 }
 
 type ChatbotContext = {
   messages: MessageProps[]
   setMessages: Dispatch<React.SetStateAction<MessageProps[]>>
-  conversations: Conversations
-  setConversations: Dispatch<React.SetStateAction<Conversations>>
+  dialogs: ChatbotDialog[]
+  setDialogs: Dispatch<React.SetStateAction<ChatbotDialog[]>>
+  conversations: Conversation[]
+  setConversations: Dispatch<React.SetStateAction<Conversation[]>>
   announcement: string
   setAnnouncement: Dispatch<React.SetStateAction<string>>
   isChatbotOpen: boolean
   setIsChatbotOpen: (value: boolean) => void
   isSendButtonDisabled: boolean
   setIsSendButtonDisabled: (value: boolean) => void
+  updateConversations: (messages: MessageProps[], summary?: string) => void
 }
 
 export const ChatbotContext = createContext<ChatbotContext>({
@@ -157,7 +188,11 @@ export const ChatbotContext = createContext<ChatbotContext>({
   setMessages: () => {
     /* no-op */
   },
-  conversations: initialConversations,
+  dialogs: [],
+  setDialogs: () => {
+    /* no-op */
+  },
+  conversations: [],
   setConversations: () => {
     /* no-op */
   },
@@ -171,6 +206,9 @@ export const ChatbotContext = createContext<ChatbotContext>({
   },
   isSendButtonDisabled: false,
   setIsSendButtonDisabled: () => {
+    /* no-op */
+  },
+  updateConversations: () => {
     /* no-op */
   },
 })

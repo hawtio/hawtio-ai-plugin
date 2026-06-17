@@ -1,10 +1,9 @@
 import { PageContext } from '@hawtio/react/ui'
 import { ToolCall } from '@langchain/core/messages/tool'
+import { Conversation } from '@patternfly/chatbot'
 import Chatbot, { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import ChatbotContent from '@patternfly/chatbot/dist/dynamic/ChatbotContent'
-import ChatbotConversationHistoryNav, {
-  Conversation,
-} from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
+import ChatbotConversationHistoryNav from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
 import ChatbotFooter, { ChatbotFootnote } from '@patternfly/chatbot/dist/dynamic/ChatbotFooter'
 import ChatbotHeader, {
   ChatbotHeaderActions,
@@ -20,32 +19,32 @@ import { Alert, Button, Content, Flex, Label } from '@patternfly/react-core'
 import WrenchIcon from '@patternfly/react-icons/dist/esm/icons/wrench-icon'
 import React, { Dispatch, useContext, useEffect, useRef, useState } from 'react'
 import { aiService } from '../common/ai-service'
-import { ChatbotContext, Conversations, initialConversations } from './context'
+import { ChatbotContext } from './context'
 import { log } from './globals'
 
 export const DiagnosisChatbot: React.FC = () => {
-  const { setMessages, conversations, setConversations } = useContext(ChatbotContext)
+  const { setMessages, dialogs, conversations } = useContext(ChatbotContext)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [filteredConversations, setFilteredConversations] = useState<Conversation[]>(conversations)
 
-  const findMatchingItems = (targetValue: string) => {
-    let filteredConversations: Conversations = Object.entries(initialConversations).reduce(
-      (acc, [key, items]) => {
-        const filteredItems = items.filter((item: { text: string }) =>
-          item.text.toLowerCase().includes(targetValue.toLowerCase()),
-        )
-        if (filteredItems.length > 0) {
-          acc[key] = filteredItems
-        }
-        return acc
-      },
-      {} as Record<string, Conversation[]>,
-    )
-
-    // append message if no items are found
-    if (Object.keys(filteredConversations).length === 0) {
-      filteredConversations = [{ id: '13', noIcon: true, text: 'No results found' }]
+  const onSelectItemInHistory = (selected: string) => {
+    log.debug('Selected conversation with ID:', selected)
+    const dialog = dialogs.find(c => c.id === selected)
+    if (dialog) {
+      setMessages(dialog.messages)
+      setIsDrawerOpen(!isDrawerOpen)
     }
-    return filteredConversations
+  }
+
+  const handleSearchTextChange = (value: string) => {
+    if (value.trim() === '') {
+      setFilteredConversations(conversations)
+      return
+    }
+
+    const filtered = conversations.filter(c => c.text.toLowerCase().includes(value.toLowerCase()))
+    log.debug('Filtered conversations:', filtered)
+    setFilteredConversations(filtered)
   }
 
   const displayMode = ChatbotDisplayMode.drawer
@@ -58,27 +57,18 @@ export const DiagnosisChatbot: React.FC = () => {
         displayMode={displayMode}
         onDrawerToggle={() => {
           setIsDrawerOpen(!isDrawerOpen)
-          setConversations(initialConversations)
+          setFilteredConversations(conversations)
         }}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        activeItemId='1'
-        onSelectActiveItem={(_e, selectedItem) => log.debug(`Selected history item with id ${selectedItem}`)}
-        conversations={conversations}
+        onSelectActiveItem={(_e, selectedItem) => onSelectItemInHistory(String(selectedItem))}
+        conversations={[...filteredConversations].reverse()}
         onNewChat={() => {
           setIsDrawerOpen(!isDrawerOpen)
+          setFilteredConversations(conversations)
           setMessages([])
-          setConversations(initialConversations)
         }}
-        handleTextInputChange={value => {
-          if (value === '') {
-            setConversations(initialConversations)
-          }
-          // this is where you would perform search on the items in the drawer
-          // and update the state
-          const newConversations = findMatchingItems(value)
-          setConversations(newConversations)
-        }}
+        handleTextInputChange={handleSearchTextChange}
         drawerContent={
           <>
             <DiagnosisChatbotHeader isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
@@ -140,7 +130,7 @@ const DiagnosisChatbotContent: React.FC = () => {
 
 const DiagnosisChatbotFooter: React.FC = () => {
   const { username } = useContext(PageContext)
-  const { messages, setMessages, setAnnouncement, isSendButtonDisabled, setIsSendButtonDisabled } =
+  const { messages, setAnnouncement, isSendButtonDisabled, setIsSendButtonDisabled, updateConversations } =
     useContext(ChatbotContext)
   const messagesRef = useRef(messages)
 
@@ -159,12 +149,15 @@ const DiagnosisChatbotFooter: React.FC = () => {
     newMessages.push(...messagesRef.current)
     newMessages.push(aiService.createUserMessage(username, message))
     newMessages.push(aiService.createLoadingBotMessage())
-    setMessages(newMessages)
+    updateConversations(newMessages)
     // make announcement to assistive devices that new messages have been added
     setAnnouncement(`Message from User: ${message}. Message from Bot is loading.`)
     log.debug('handleSend - new messages:', newMessages)
 
-    const answer = await (newMessages.length === 2 ? aiService.newChat(message) : aiService.chat(message))
+    const dialogId = newMessages[0]!.id!
+    const answer = await (newMessages.length === 2
+      ? aiService.newChat(dialogId, message)
+      : aiService.chat(dialogId, message))
     const loadedMessages: MessageProps[] = []
     loadedMessages.push(...newMessages)
     log.debug('handleSend - loaded messages:', loadedMessages)
@@ -172,7 +165,7 @@ const DiagnosisChatbotFooter: React.FC = () => {
     loadedMessages.pop()
     const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
-    setMessages(loadedMessages)
+    updateConversations(loadedMessages)
     setAnnouncement(`Message from Bot: ${answer}`)
     setIsSendButtonDisabled(false)
   }
@@ -207,7 +200,7 @@ export const ToolCallsInfo = (call: ToolCall, index: number) => {
 
 export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
   const { username } = useContext(PageContext)
-  const { messages, setMessages, setAnnouncement, setIsSendButtonDisabled } = useContext(ChatbotContext)
+  const { messages, setAnnouncement, setIsSendButtonDisabled, updateConversations } = useContext(ChatbotContext)
   const messagesRef = useRef(messages)
 
   const approve = async (toolCalls: ToolCall[]) => {
@@ -218,7 +211,7 @@ export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
     newMessages.push(...messagesRef.current)
     newMessages.push(aiService.createUserMessage(username, 'Approved'))
     newMessages.push(aiService.createLoadingBotMessage())
-    setMessages(newMessages)
+    updateConversations(newMessages)
     // make announcement to assistive devices that new messages have been added
     setAnnouncement(`User approved tool usage. Message from Bot is loading.`)
     log.debug('approve - newMessages:', newMessages)
@@ -232,7 +225,7 @@ export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
     loadedMessages.pop()
     const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
-    setMessages(loadedMessages)
+    updateConversations(loadedMessages)
     setAnnouncement(`Message from Bot: ${answer}`)
     setIsSendButtonDisabled(false)
   }
