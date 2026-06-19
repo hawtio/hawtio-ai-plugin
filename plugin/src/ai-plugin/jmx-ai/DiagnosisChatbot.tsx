@@ -1,6 +1,6 @@
 import { PageContext } from '@hawtio/react/ui'
 import { ToolCall } from '@langchain/core/messages/tool'
-import { Conversation } from '@patternfly/chatbot'
+import { Conversation, MarkdownContent } from '@patternfly/chatbot'
 import Chatbot, { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import ChatbotContent from '@patternfly/chatbot/dist/dynamic/ChatbotContent'
 import ChatbotConversationHistoryNav from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
@@ -184,8 +184,8 @@ const DiagnosisChatbotFooter: React.FC = () => {
 
 export const ThinkInfo = (think: string) => {
   return (
-    <Alert variant='info' title='Think' isExpandable>
-      {think}
+    <Alert variant='info' title='Thinking' isExpandable>
+      <MarkdownContent content={think} />
     </Alert>
   )
 }
@@ -216,7 +216,8 @@ export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
     setAnnouncement(`User approved tool usage. Message from Bot is loading.`)
     log.debug('approve - newMessages:', newMessages)
 
-    const answer = await aiService.invokeTools(toolCalls)
+    const dialogId = newMessages[0]!.id!
+    const answer = await aiService.invokeTools(dialogId, toolCalls)
     log.debug('Answer:', answer)
     const loadedMessages: MessageProps[] = []
     loadedMessages.push(...newMessages)
@@ -237,7 +238,7 @@ export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
     const newMessages: MessageProps[] = []
     newMessages.push(...messages)
     newMessages.push(aiService.createUserMessage(username, 'Rejected'))
-    setMessages(newMessages)
+    updateConversations(newMessages)
     setIsSendButtonDisabled(false)
   }
 

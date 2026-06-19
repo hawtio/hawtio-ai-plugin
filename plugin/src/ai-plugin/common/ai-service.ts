@@ -42,7 +42,6 @@ export interface IAiService {
   createUserMessage(name: string, content: string): MessageProps
   createLoadingBotMessage(): MessageProps
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
-  extractThink(message: string): MessageWithThink
   toBotMessage(
     answer: AIMessage | string,
     thinkInfo: (think: string) => ReactNode,
@@ -166,6 +165,7 @@ class AiService implements IAiService {
       // Non-error answer
       messages.push(answer)
     }
+    log.debug('Current messages:', messages)
     return answer
   }
 
@@ -231,12 +231,12 @@ class AiService implements IAiService {
     }
   }
 
-  extractThink(message: string): MessageWithThink {
-    // extract inside <think>...</think> from message
-    const think = message.match(/<think>(.*?)<\/think>/s)?.[1]?.trim()
-    // remove <think>...</think> from message
-    const content = message.replace(/<think>.*?<\/think>/s, '')
-    log.debug('extractThink - content:', content, 'think:', think)
+  private extractThink(message: AIMessage): MessageWithThink {
+    const content = message.content as string
+    let think: string | undefined
+    if (message.additional_kwargs?.reasoning_content) {
+      think = message.additional_kwargs?.reasoning_content as string | undefined
+    }
     return { content, think }
   }
 
@@ -253,7 +253,7 @@ class AiService implements IAiService {
 
     if (!answer.tool_calls || answer.tool_calls.length === 0) {
       // No tool calls
-      const { content, think } = aiService.extractThink(answer.content as string)
+      const { content, think } = aiService.extractThink(answer)
       const extraContent = think ? { beforeMainContent: thinkInfo(think) } : undefined
       return aiService.createBotMessage(content, extraContent)
     }
