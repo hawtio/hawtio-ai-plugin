@@ -37,14 +37,14 @@
     "@patternfly/react-tokens": "^6.4.0",
     "langchain": "^1.2.39",
     "monaco-editor": "~0.52.2",
-    "react": "^18.3.1",
+    "react": "^19.2.7",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.0.8",
     "@swc/core": "^1.15.18",
-    "@types/react": "^18.3.23",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^18.3.7",
     "@types/react-router-dom": "^5.3.3",
     "commit-and-tag-version": "^12.7.1",
