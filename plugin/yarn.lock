@@ -693,7 +693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google/generative-ai@npm:^0.24.0":
+"@google/generative-ai@npm:^0.24.1":
   version: 0.24.1
   resolution: "@google/generative-ai@npm:0.24.1"
   checksum: 10/992a82e2d4a58d6eb0545254fe05e2da074c08560a9d51fb29c6f2a44db8c66ba44d87bc04e61b3676f5adc9ab94e527f171ee1395edf4ccbead3472fd8efff8
@@ -1456,13 +1456,13 @@ __metadata:
   linkType: hard
 
 "@langchain/google-genai@npm:^2.1.26":
-  version: 2.1.29
-  resolution: "@langchain/google-genai@npm:2.1.29"
+  version: 2.2.0
+  resolution: "@langchain/google-genai@npm:2.2.0"
   dependencies:
-    "@google/generative-ai": "npm:^0.24.0"
+    "@google/generative-ai": "npm:^0.24.1"
   peerDependencies:
-    "@langchain/core": ^1.1.42
-  checksum: 10/d2d434ebb2088c0fc499110df262e0f1958f2c8f00511a40970001b66ac76e9d21e495f9e89f6b775f15b8438eda331b58769d9dbc715d8d0a2e434527f1d704
+    "@langchain/core": ^1.2.0
+  checksum: 10/caf055797f8149ad51fd51044319da770b4a64dc552ed8e8d4eee7d49d482dd7e2bf228807bdde3c9d26cb854dbf9b396aee85cee76e02499da3d7a9312b5e1d
   languageName: node
   linkType: hard
 
