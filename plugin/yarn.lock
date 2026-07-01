@@ -1854,11 +1854,11 @@ __metadata:
   linkType: hard
 
 "@patternfly/react-charts@npm:^8.4.0":
-  version: 8.4.1
-  resolution: "@patternfly/react-charts@npm:8.4.1"
+  version: 8.5.1
+  resolution: "@patternfly/react-charts@npm:8.5.1"
   dependencies:
-    "@patternfly/react-styles": "npm:^6.4.0"
-    "@patternfly/react-tokens": "npm:^6.4.0"
+    "@patternfly/react-styles": "npm:^6.5.1"
+    "@patternfly/react-tokens": "npm:^6.5.1"
     hoist-non-react-statics: "npm:^3.3.2"
     lodash: "npm:^4.17.23"
     tslib: "npm:^2.8.1"
@@ -1920,7 +1920,7 @@ __metadata:
       optional: true
     victory-zoom-container:
       optional: true
-  checksum: 10/0f12be739ccda52240738561bc8af310505af1a5e280329b793e225f84295b384d240d039815f45619abfdba1f109bfe720680bf258c790bd7ff8d7e35a6927b
+  checksum: 10/8b58bfba1dab95a6c08622b54e22585b82298bb05688430dd29b16c91d3477d92676429a208cb285b9659c14d8e0ccd7806209ec242116d2a374b76fa9d230a3
   languageName: node
   linkType: hard
 
