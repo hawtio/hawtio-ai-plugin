@@ -40,7 +40,7 @@
     <maven.compiler.release>17</maven.compiler.release>
 
     <!-- Versions -->
-    <hawtio-version>5.2.0</hawtio-version>
+    <hawtio-version>5.2.1</hawtio-version>
     <spring-boot-version>4.0.6</spring-boot-version>
     <camel-spring-boot-version>4.20.0</camel-spring-boot-version>
     <node-version>v24.14.1</node-version>
