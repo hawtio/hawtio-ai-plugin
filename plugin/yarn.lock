@@ -1466,7 +1466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-checkpoint@npm:^1.1.2, @langchain/langgraph-checkpoint@npm:^1.1.3":
+"@langchain/langgraph-checkpoint@npm:^1.1.3":
   version: 1.1.3
   resolution: "@langchain/langgraph-checkpoint@npm:1.1.3"
   peerDependencies:
@@ -1475,9 +1475,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-sdk@npm:~1.9.25":
-  version: 1.9.25
-  resolution: "@langchain/langgraph-sdk@npm:1.9.25"
+"@langchain/langgraph-sdk@npm:~1.9.28":
+  version: 1.9.28
+  resolution: "@langchain/langgraph-sdk@npm:1.9.28"
   dependencies:
     "@langchain/protocol": "npm:^0.0.18"
     "@types/json-schema": "npm:^7.0.15"
@@ -1498,22 +1498,22 @@ __metadata:
       optional: true
     vue:
       optional: true
-  checksum: 10/148afde17aa6c0f9632db2722c170c4da9d4ae10580b9a9b1d23389cc78cc4953ce30c0f76b72bcd756b7757680152f0ae46b145fa7a659acdab72630ad82a83
+  checksum: 10/032bf214cdb222f0d3cc50058085fa4f4ef31f09088fbe01d41f7aaa22fc655a8e2bb9d979dc5b2dbf3993249381ea36de58a975a2044e727b96f1bb578c7212
   languageName: node
   linkType: hard
 
-"@langchain/langgraph@npm:^1.4.4":
-  version: 1.4.7
-  resolution: "@langchain/langgraph@npm:1.4.7"
+"@langchain/langgraph@npm:^1.4.8":
+  version: 1.4.9
+  resolution: "@langchain/langgraph@npm:1.4.9"
   dependencies:
     "@langchain/langgraph-checkpoint": "npm:^1.1.3"
-    "@langchain/langgraph-sdk": "npm:~1.9.25"
+    "@langchain/langgraph-sdk": "npm:~1.9.28"
     "@langchain/protocol": "npm:^0.0.18"
     "@standard-schema/spec": "npm:1.1.0"
   peerDependencies:
     "@langchain/core": ^1.1.48
     zod: ^3.25.32 || ^4.2.0
-  checksum: 10/61714d650452bc0ad885b432c8d70ea9919698b056e1f85baf93701324945a4cbd4e344b3dbea4f7b51ce170df417a3bbb1439c217f8cc8a39b041550531fa60
+  checksum: 10/b36ec3a0c4d4239494ec39e45237526cc250c109ba9f2c4ad91ce0a320a81a5bb6cbd868bdff7c32669adfa4ae73f6997db8af456adc5daecf12e9725c310935
   languageName: node
   linkType: hard
 
@@ -8526,16 +8526,16 @@ __metadata:
   linkType: hard
 
 "langchain@npm:^1.2.39":
-  version: 1.5.2
-  resolution: "langchain@npm:1.5.2"
+  version: 1.5.5
+  resolution: "langchain@npm:1.5.5"
   dependencies:
-    "@langchain/langgraph": "npm:^1.4.4"
-    "@langchain/langgraph-checkpoint": "npm:^1.1.2"
+    "@langchain/langgraph": "npm:^1.4.8"
+    "@langchain/langgraph-checkpoint": "npm:^1.1.3"
     langsmith: "npm:>=0.5.0 <1.0.0"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.2.1
-  checksum: 10/a5a5bb3774e166a564a6eaf20defadd357c835e6be8f4808c2297cc6738a4b36cf6828bf9d02416676d3703659efe181c2ee2d499d587dc27a4ed942ac103e29
+    "@langchain/core": ^1.2.5
+  checksum: 10/28161c736e6ffeca820e1637ec359c6f037c6bc84c68b09c25b99bf60cbb154cd759ecd927198d850e0e32c69cc115d8dc3c22578b04f1d85b7f82041f5b5f8a
   languageName: node
   linkType: hard
 
