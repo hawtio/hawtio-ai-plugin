@@ -1529,15 +1529,15 @@ __metadata:
   linkType: hard
 
 "@langchain/openai@npm:^1.4.4":
-  version: 1.4.7
-  resolution: "@langchain/openai@npm:1.4.7"
+  version: 1.5.6
+  resolution: "@langchain/openai@npm:1.5.6"
   dependencies:
     js-tiktoken: "npm:^1.0.12"
-    openai: "npm:^6.37.0"
+    openai: "npm:^6.41.0"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.1.48
-  checksum: 10/71a183fb6cbb3b33073e961f1644194253bca1763b9f5d5d6614f161954cca01c84dc643cf77590727aee7f9cacd1a9c7534a811d5e3a11d478608a07942bd31
+    "@langchain/core": ^1.2.5
+  checksum: 10/12985478f6d3c1ba23798dd43fa3aba8603b3adc0974e89593d9f36e6703da297c4c8fccdf36a774fca8219d1b7d9e4700da613b317865058608e12eb85c4ba9
   languageName: node
   linkType: hard
 
@@ -10103,18 +10103,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^6.37.0":
-  version: 6.41.0
-  resolution: "openai@npm:6.41.0"
+"openai@npm:^6.41.0":
+  version: 6.49.0
+  resolution: "openai@npm:6.49.0"
   peerDependencies:
+    "@aws-sdk/credential-provider-node": ">=3.972.0 <4"
+    "@smithy/hash-node": ">=4.3.0 <5"
+    "@smithy/signature-v4": ">=5.4.0 <6"
     ws: ^8.18.0
     zod: ^3.25 || ^4.0
   peerDependenciesMeta:
+    "@aws-sdk/credential-provider-node":
+      optional: true
+    "@smithy/hash-node":
+      optional: true
+    "@smithy/signature-v4":
+      optional: true
     ws:
       optional: true
     zod:
       optional: true
-  checksum: 10/b43b365c9b7cd5a5e460525c8db58d1baeb76d5fac432c1578c9a3cdfcf5cfa472a9c52a35af8f6954f5557693dcafce4c2f4fe3cda442c9cdfc8b4eacf85d9f
+  checksum: 10/d835e45c05469804a7ba45eb239a24b9a38626e47c81bdcfb96a0ede9eb05c6a1a6ff969eb76359c7a9966332f441277b20fef5203fe40de6632a996623bb586
   languageName: node
   linkType: hard
 
