@@ -20,7 +20,7 @@ import {
 import { right } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core'
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
 import React, { useContext, useRef } from 'react'
-import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router'
 import { DiagnosisChatbot } from './DiagnosisChatbot'
 import './JmxContent.css'
 import { Attributes } from './attributes'

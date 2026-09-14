@@ -2,7 +2,7 @@ import { EVENT_REFRESH, eventService, MBeanNode, MBeanTree, PluginNodeSelectionC
 import { Conversation } from '@patternfly/chatbot/dist/esm/ChatbotConversationHistoryNav'
 import { MessageProps } from '@patternfly/chatbot/dist/esm/Message'
 import { createContext, Dispatch, useContext, useEffect, useRef, useState } from 'react'
-import { To, useNavigate, useSearchParams } from 'react-router-dom'
+import { To, useNavigate, useSearchParams } from 'react-router'
 import { log, PARAM_KEY_NODE_ID, pluginName, pluginPath } from './globals'
 import { ChatbotDialog } from './model'
 
