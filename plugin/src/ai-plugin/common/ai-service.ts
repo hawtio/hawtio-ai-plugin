@@ -10,14 +10,15 @@ import { ChatOpenAI } from '@langchain/openai'
 import { MessageExtraContent, MessageProps } from '@patternfly/chatbot/dist/esm/Message'
 import patternflyAvatar from '@patternfly/chatbot/patternfly-docs/content/extensions/chatbot/examples/Messages/patternfly_avatar.jpg'
 import userAvatar from '@patternfly/react-core/dist/styles/assets/images/img_avatar-light.svg'
-import { ReactNode } from 'react'
+import { ComponentType, createElement } from 'react'
 import { log } from '../jmx-ai/globals'
 import { AiModel } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
+import { getWorkspaceTools } from './tools'
 
 const BOT_NAME = 'Hawtio AI'
 
-const TOOLS: DynamicStructuredTool[] = [] as const
+const TOOLS: DynamicStructuredTool[] = getWorkspaceTools()
 const TOOLS_BY_NAME: Record<string, DynamicStructuredTool> = TOOLS.reduce(
   (acc, tool) => {
     acc[tool.name] = tool
@@ -44,9 +45,9 @@ export interface IAiService {
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
   toBotMessage(
     answer: AIMessage | string,
-    thinkInfo: (think: string) => ReactNode,
-    toolCallsInfo: (call: ToolCall, index: number) => ReactNode,
-    toolCallsApprove: (toolCalls: ToolCall[]) => ReactNode,
+    ThinkInfo: ComponentType<{ think: string }>,
+    ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
+    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[] }>,
   ): MessageProps
 }
 
@@ -193,7 +194,7 @@ class AiService implements IAiService {
     if (finalAnswer) {
       messages.push(finalAnswer)
     }
-    console.debug('Messages>>', messages)
+    log.debug('Messages>>', messages)
     return finalAnswer
   }
 
@@ -242,9 +243,9 @@ class AiService implements IAiService {
 
   toBotMessage(
     answer: AIMessage | string,
-    thinkInfo: (think: string) => ReactNode,
-    toolCallsInfo: (call: ToolCall, index: number) => ReactNode,
-    toolCallsApprove: (toolCalls: ToolCall[]) => ReactNode,
+    ThinkInfo: ComponentType<{ think: string }>,
+    ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
+    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[] }>,
   ): MessageProps {
     if (typeof answer === 'string') {
       // Error
@@ -254,7 +255,7 @@ class AiService implements IAiService {
     if (!answer.tool_calls || answer.tool_calls.length === 0) {
       // No tool calls
       const { content, think } = aiService.extractThink(answer)
-      const extraContent = think ? { beforeMainContent: thinkInfo(think) } : undefined
+      const extraContent = think ? { beforeMainContent: createElement(ThinkInfo, { think }) } : undefined
       return aiService.createBotMessage(content, extraContent)
     }
 
@@ -262,8 +263,8 @@ class AiService implements IAiService {
     const toolCalls = answer.tool_calls
     const content = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
     const extraContent = {
-      beforeMainContent: toolCalls.map(toolCallsInfo),
-      afterMainContent: toolCallsApprove(toolCalls),
+      beforeMainContent: toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index })),
+      afterMainContent: createElement(ToolCallsApprove, { toolCalls }),
     }
     return aiService.createBotMessage(content, extraContent)
   }
