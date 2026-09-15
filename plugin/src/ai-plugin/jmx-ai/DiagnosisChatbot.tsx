@@ -182,7 +182,7 @@ const DiagnosisChatbotFooter: React.FC = () => {
   )
 }
 
-export const ThinkInfo = (think: string) => {
+export const ThinkInfo: React.FC<{ think: string }> = ({ think }) => {
   return (
     <Alert variant='info' title='Thinking' isExpandable>
       <MarkdownContent content={think} />
@@ -190,15 +190,15 @@ export const ThinkInfo = (think: string) => {
   )
 }
 
-export const ToolCallsInfo = (call: ToolCall, index: number) => {
+export const ToolCallsInfo: React.FC<{ call: ToolCall; index: number }> = ({ call, index }) => {
   return (
-    <Alert key={index} variant='info' customIcon={<WrenchIcon />} title={call.name} isExpandable>
+    <Alert key={index} variant='info' customIcon={<WrenchIcon />} title={call.name}>
       <p>Args: {JSON.stringify(call.args)} </p>
     </Alert>
   )
 }
 
-export const ToolCallsApprove = (toolCalls: ToolCall[]) => {
+export const ToolCallsApprove: React.FC<{ toolCalls: ToolCall[] }> = ({ toolCalls }) => {
   const { username } = useContext(PageContext)
   const { messages, setAnnouncement, setIsSendButtonDisabled, updateConversations } = useContext(ChatbotContext)
   const messagesRef = useRef(messages)
