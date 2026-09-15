@@ -234,6 +234,10 @@ export const ToolCallsApprove: React.FC<{ toolCalls: ToolCall[] }> = ({ toolCall
   const reject = () => {
     log.debug('Rejected')
 
+    const dialogId = messages[0]?.id
+    if (dialogId) {
+      aiService.rejectTools(dialogId, toolCalls)
+    }
     setIsSendButtonDisabled(true)
     const newMessages: MessageProps[] = []
     newMessages.push(...messages)

@@ -58,13 +58,16 @@ function searchMBeansTool(): DynamicStructuredTool {
     }),
     func: async ({ domain, properties }): Promise<string> => {
       log.debug('tools - searchMBeans called:', domain, properties)
-      let parsed: Record<string, unknown>
+      let parsed: unknown
       try {
-        parsed = JSON.parse(properties) as Record<string, unknown>
+        parsed = JSON.parse(properties)
       } catch {
         return JSON.stringify({ error: `Invalid JSON for properties: ${properties}` })
       }
-      const nodes: MBeanNode[] = await workspace.findMBeans(domain, parsed)
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        return JSON.stringify({ error: `properties must be a JSON object, got: ${properties}` })
+      }
+      const nodes: MBeanNode[] = await workspace.findMBeans(domain, parsed as Record<string, unknown>)
       const result = nodes.map((n: MBeanNode) => n.objectName).filter((s): s is string => s !== undefined)
       log.debug('tools - searchMBeans result count:', result.length)
       return JSON.stringify(result)

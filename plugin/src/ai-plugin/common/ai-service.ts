@@ -1,6 +1,13 @@
 import { ChatAnthropic } from '@langchain/anthropic'
 import { BaseLanguageModelInput } from '@langchain/core/language_models/base'
-import { AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages'
+import {
+  AIMessage,
+  AIMessageChunk,
+  BaseMessage,
+  HumanMessage,
+  SystemMessage,
+  ToolMessage,
+} from '@langchain/core/messages'
 import { ToolCall } from '@langchain/core/messages/tool'
 import { Runnable } from '@langchain/core/runnables'
 import { DynamicStructuredTool } from '@langchain/core/tools'
@@ -40,6 +47,7 @@ export interface IAiService {
   newChat(dialogId: string, message: string, system?: string): Promise<AIMessage | string>
   chat(dialogId: string, message: string): Promise<AIMessage | string>
   invokeTools(dialogId: string, toolCalls: ToolCall[]): Promise<AIMessage | string>
+  rejectTools(dialogId: string, toolCalls: ToolCall[]): void
   createUserMessage(name: string, content: string): MessageProps
   createLoadingBotMessage(): MessageProps
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
@@ -181,21 +189,38 @@ class AiService implements IAiService {
       this.memory[dialogId] = messages
     }
 
-    for (const call of toolCalls) {
-      log.debug('🛠️  Call:', call.name, JSON.stringify(call.args))
-      const selectedTool = TOOLS_BY_NAME[call.name]
-      const toolAnswer = await selectedTool?.invoke(call)
-      if (toolAnswer) {
-        log.debug('🛠️  ' + call.name + ':', toolAnswer)
-        messages.push(toolAnswer)
+    try {
+      for (const call of toolCalls) {
+        log.debug('🛠️  Call:', call.name, JSON.stringify(call.args))
+        const selectedTool = TOOLS_BY_NAME[call.name]
+        const toolAnswer = await selectedTool?.invoke(call)
+        if (toolAnswer) {
+          log.debug('🛠️  ' + call.name + ':', toolAnswer)
+          messages.push(toolAnswer)
+        }
       }
+      const finalAnswer = await this.llmWithTools.invoke(messages)
+      if (finalAnswer) {
+        messages.push(finalAnswer)
+      }
+      log.debug('Messages>>', messages)
+      return finalAnswer
+    } catch (error) {
+      log.error('Error while invoking tools:', error)
+      return String(error)
     }
-    const finalAnswer = await this.llmWithTools.invoke(messages)
-    if (finalAnswer) {
-      messages.push(finalAnswer)
+  }
+
+  rejectTools(dialogId: string, toolCalls: ToolCall[]): void {
+    const messages = this.memory[dialogId]
+    if (!messages) return
+    for (const call of toolCalls) {
+      messages.push(new ToolMessage({ tool_call_id: call.id ?? call.name, content: 'User rejected' }))
     }
-    log.debug('Messages>>', messages)
-    return finalAnswer
+    log.debug(
+      'rejectTools - added rejection ToolMessages for:',
+      toolCalls.map(c => c.name),
+    )
   }
 
   private generateId(): string {
