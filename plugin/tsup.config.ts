@@ -8,6 +8,7 @@ export default defineConfig(() => {
     format: 'cjs',
     sourcemap: true,
     splitting: false,
+    external: ['jolokia.js'],
     loader: {
       '.svg': 'dataurl',
       '.jpg': 'dataurl',

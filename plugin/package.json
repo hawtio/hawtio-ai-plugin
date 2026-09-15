@@ -39,7 +39,12 @@
     "monaco-editor": "~0.52.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.18.3"
+    "react-router": "^7.18.3",
+    "react-split": "^2.0.14",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "jolokia.js": "^2.6.1"
   },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.0.8",
@@ -52,6 +57,7 @@
     "cz-conventional-changelog": "^3.3.0",
     "html-webpack-plugin": "^5.6.6",
     "jest": "^30.3.0",
+    "jolokia.js": "^2.6.1",
     "prettier": "3.9.6",
     "replace": "^1.2.2",
     "style-loader": "^4.0.0",
