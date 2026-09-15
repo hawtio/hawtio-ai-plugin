@@ -8,6 +8,7 @@ Guidelines for AI coding agents working on this repository.
 - Build tool: Maven (backend), Yarn v4 + Webpack (frontend)
 - Java version: 17
 - Node.js version: v24 (managed by `frontend-maven-plugin`)
+- React version: **React 18 (`18.3.x`)** (locked for compatibility with `@hawtio/react` and PatternFly v6; do not upgrade to React 19)
 - UI framework: [PatternFly v6](https://www.patternfly.org/)
 - AI library: [LangChain.js](https://js.langchain.com/) (`langchain`, `@langchain/*`)
 - Commit style: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (`feat:`, `fix:`, `chore:`, etc.)
@@ -58,6 +59,16 @@ yarn format:fix     # auto-fix Prettier formatting
 ```
 
 ## Development Workflow
+
+Before completing tasks or committing changes, run the following verification inside `plugin/`:
+
+```bash
+cd plugin
+yarn format:fix   # auto-fix Prettier formatting
+yarn build:all    # verify both Webpack and tsup library builds
+```
+
+**Important**: Always run `yarn format:fix` in `plugin/` after adding or modifying code.
 
 For a fast frontend feedback cycle, run the backend and frontend separately:
 
