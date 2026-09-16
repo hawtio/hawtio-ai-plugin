@@ -30,6 +30,7 @@ Read these documents **only when the task requires it** — do not load them all
 | Document | When to read |
 | --- | --- |
 | [`README.md`](README.md) | Project overview, installation, and development guide |
+| [`docs/coding-styles.md`](docs/coding-styles.md) | Project-specific coding conventions (imports, naming, etc.) — read when writing or reviewing any code |
 | [`plugin/README.md`](plugin/README.md) | Plugin-specific details |
 | [`plugin/CHANGELOG.md`](plugin/CHANGELOG.md) | Release history |
 
@@ -95,4 +96,6 @@ For a fast frontend feedback cycle, run the backend and frontend separately:
 
 ## Code Style
 
-See [`.editorconfig`](.editorconfig) and [`plugin/.prettierrc.js`](plugin/.prettierrc.js).
+See [`.editorconfig`](.editorconfig) and [`plugin/.prettierrc.js`](plugin/.prettierrc.js) for formatting rules.
+
+For project-specific coding conventions (e.g. how to import `@patternfly/chatbot` components), see [`docs/coding-styles.md`](docs/coding-styles.md).
