@@ -1,7 +1,8 @@
 import { HawtioPlugin, configManager } from '@hawtio/react'
 import '@patternfly/chatbot/dist/css/main.css'
+import { aiChat } from './chat'
 import { aiCommon } from './common'
-import { jmxAi } from './jmx-ai'
+import { aiJmx } from './jmx-ai'
 
 /**
  * The entry function for the plugin exposed to Hawtio.
@@ -19,7 +20,8 @@ import { jmxAi } from './jmx-ai'
  */
 export const plugin: HawtioPlugin = () => {
   aiCommon()
-  jmxAi()
+  aiJmx()
+  aiChat()
 }
 
 // Register the custom plugin version to Hawtio

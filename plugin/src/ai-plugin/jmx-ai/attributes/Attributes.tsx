@@ -1,6 +1,6 @@
 import { AttributeModal, AttributeValues, HawtioEmptyCard, HawtioLoadingCard } from '@hawtio/react'
 import { PageContext } from '@hawtio/react/ui'
-import { MessageProps } from '@patternfly/chatbot/dist/esm/Message'
+import { MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
 import {
   Button,
   Drawer,
@@ -15,9 +15,12 @@ import { MonitoringIcon } from '@patternfly/react-icons'
 import { Table, Tbody, Td, Th, Thead, ThProps, Tr } from '@patternfly/react-table'
 import Jolokia, { JolokiaErrorResponse, JolokiaFetchErrorResponse, JolokiaSuccessResponse } from 'jolokia.js'
 import React, { useContext, useEffect, useState } from 'react'
+import { ChatbotContext } from '../../chat/context'
+import { ThinkInfo } from '../../chat/ThinkInfo'
+import { ToolCallsApprove } from '../../chat/ToolCallsApprove'
+import { ToolCallsInfo } from '../../chat/ToolCallsInfo'
 import { aiService } from '../../common/ai-service'
-import { ChatbotContext, MBeanTreeContext } from '../context'
-import { ThinkInfo, ToolCallsApprove, ToolCallsInfo } from '../DiagnosisChatbot'
+import { MBeanTreeContext } from '../context'
 import { log } from '../globals'
 import { jmxAiService } from '../jmx-ai-service'
 import { isObject, objectSorter } from '../util'

@@ -4,7 +4,7 @@ import help from './help.md'
 
 const order = 41
 
-export const jmxAi: HawtioPlugin = () => {
+export const aiJmx: HawtioPlugin = () => {
   log.info('Loading', pluginName)
 
   hawtio.addDeferredPlugin(pluginName, async () => {
@@ -13,6 +13,7 @@ export const jmxAi: HawtioPlugin = () => {
         id: pluginName,
         title: pluginTitle,
         path: pluginPath,
+        order,
         component: Jmx,
         knownQueryParams: ['nid'],
         isActive: async () => workspace.hasMBeans(),

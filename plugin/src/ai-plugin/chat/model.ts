@@ -1,4 +1,5 @@
-import { Conversation, MessageProps } from '@patternfly/chatbot'
+import { Conversation } from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
+import { MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
 
 export class ChatbotDialog {
   public readonly id: string

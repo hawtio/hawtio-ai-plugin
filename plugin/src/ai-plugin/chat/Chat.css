@@ -1,0 +1,4 @@
+.pf-v6-c-page__main-container:has(#chat-content) {
+  height: 100%;
+  margin: 0;
+}
