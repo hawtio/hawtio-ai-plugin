@@ -1,4 +1,5 @@
 import { AttributeTable, Chart, JmxContentMBeans, MBeanNode, Operations } from '@hawtio/react'
+import { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import {
   Button,
   Content,
@@ -21,10 +22,11 @@ import { right } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon'
 import React, { useContext, useRef } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router'
-import { DiagnosisChatbot } from './DiagnosisChatbot'
+import { ChatbotPanel } from '../chat/ChatbotPanel'
+import { ChatbotContext, useChatbot } from '../chat/context'
 import './JmxContent.css'
 import { Attributes } from './attributes'
-import { ChatbotContext, MBeanTreeContext, pluginPathWithNodeId, useChatbot } from './context'
+import { MBeanTreeContext, pluginPathWithNodeId } from './context'
 import { pluginPath } from './globals'
 
 export const JmxContent: React.FunctionComponent = () => {
@@ -129,7 +131,7 @@ export const JmxContent: React.FunctionComponent = () => {
   const panelContent = (
     <DrawerPanelContent isResizable defaultSize='500px' minSize='200px'>
       <DrawerPanelBody>
-        <DiagnosisChatbot />
+        <ChatbotPanel title='AI Diagnosis' displayMode={ChatbotDisplayMode.drawer} />
       </DrawerPanelBody>
     </DrawerPanelContent>
   )

@@ -1,8 +1,8 @@
 import { Logger } from '@hawtio/react'
 
-export const pluginName = 'hawtio-ai-jmx-ai'
-export const pluginTitle = 'JMX AI'
-export const pluginPath = '/jmx-ai'
+export const pluginName = 'hawtio-ai-jmx'
+export const pluginTitle = 'AI JMX'
+export const pluginPath = '/ai-jmx'
 
 export const log = Logger.get(pluginName)
 

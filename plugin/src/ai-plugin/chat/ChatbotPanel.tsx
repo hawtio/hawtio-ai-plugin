@@ -1,9 +1,9 @@
 import { PageContext } from '@hawtio/react/ui'
-import { ToolCall } from '@langchain/core/messages/tool'
-import { Conversation, MarkdownContent } from '@patternfly/chatbot'
 import Chatbot, { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import ChatbotContent from '@patternfly/chatbot/dist/dynamic/ChatbotContent'
-import ChatbotConversationHistoryNav from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
+import ChatbotConversationHistoryNav, {
+  Conversation,
+} from '@patternfly/chatbot/dist/dynamic/ChatbotConversationHistoryNav'
 import ChatbotFooter, { ChatbotFootnote } from '@patternfly/chatbot/dist/dynamic/ChatbotFooter'
 import ChatbotHeader, {
   ChatbotHeaderActions,
@@ -12,17 +12,23 @@ import ChatbotHeader, {
   ChatbotHeaderMenu,
   ChatbotHeaderTitle,
 } from '@patternfly/chatbot/dist/dynamic/ChatbotHeader'
+import ChatbotWelcomePrompt from '@patternfly/chatbot/dist/dynamic/ChatbotWelcomePrompt'
 import Message, { MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
 import MessageBar from '@patternfly/chatbot/dist/dynamic/MessageBar'
 import MessageBox from '@patternfly/chatbot/dist/dynamic/MessageBox'
-import { Alert, Button, Content, Flex, Label } from '@patternfly/react-core'
-import WrenchIcon from '@patternfly/react-icons/dist/esm/icons/wrench-icon'
+import { Content, Label } from '@patternfly/react-core'
 import React, { Dispatch, useContext, useEffect, useRef, useState } from 'react'
 import { aiService } from '../common/ai-service'
 import { ChatbotContext } from './context'
 import { log } from './globals'
+import { ThinkInfo } from './ThinkInfo'
+import { ToolCallsApprove } from './ToolCallsApprove'
+import { ToolCallsInfo } from './ToolCallsInfo'
 
-export const DiagnosisChatbot: React.FC = () => {
+export const ChatbotPanel: React.FC<{
+  title: string
+  displayMode: ChatbotDisplayMode
+}> = ({ title, displayMode }) => {
   const { setMessages, dialogs, conversations } = useContext(ChatbotContext)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [filteredConversations, setFilteredConversations] = useState<Conversation[]>(conversations)
@@ -32,7 +38,7 @@ export const DiagnosisChatbot: React.FC = () => {
     const dialog = dialogs.find(c => c.id === selected)
     if (dialog) {
       setMessages(dialog.messages)
-      setIsDrawerOpen(!isDrawerOpen)
+      setIsDrawerOpen(false)
     }
   }
 
@@ -46,8 +52,6 @@ export const DiagnosisChatbot: React.FC = () => {
     log.debug('Filtered conversations:', filtered)
     setFilteredConversations(filtered)
   }
-
-  const displayMode = ChatbotDisplayMode.drawer
 
   return (
     <Chatbot isCompact displayMode={displayMode}>
@@ -64,16 +68,21 @@ export const DiagnosisChatbot: React.FC = () => {
         onSelectActiveItem={(_e, selectedItem) => onSelectItemInHistory(String(selectedItem))}
         conversations={[...filteredConversations].reverse()}
         onNewChat={() => {
-          setIsDrawerOpen(!isDrawerOpen)
+          setIsDrawerOpen(false)
           setFilteredConversations(conversations)
           setMessages([])
         }}
         handleTextInputChange={handleSearchTextChange}
         drawerContent={
           <>
-            <DiagnosisChatbotHeader isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
-            <DiagnosisChatbotContent />
-            <DiagnosisChatbotFooter />
+            <ChatbotPanelHeader
+              isDrawerOpen={isDrawerOpen}
+              setIsDrawerOpen={setIsDrawerOpen}
+              title={title}
+              hasCloseButton={displayMode === ChatbotDisplayMode.drawer}
+            />
+            <ChatbotPanelContent />
+            <ChatbotPanelFooter />
           </>
         }
       />
@@ -81,10 +90,12 @@ export const DiagnosisChatbot: React.FC = () => {
   )
 }
 
-const DiagnosisChatbotHeader: React.FC<{
+const ChatbotPanelHeader: React.FC<{
   isDrawerOpen: boolean
   setIsDrawerOpen: Dispatch<React.SetStateAction<boolean>>
-}> = ({ isDrawerOpen, setIsDrawerOpen }) => {
+  title: string
+  hasCloseButton: boolean
+}> = ({ isDrawerOpen, setIsDrawerOpen, title, hasCloseButton }) => {
   const { setIsChatbotOpen } = useContext(ChatbotContext)
   const modelName = aiService.getModel()?.name
 
@@ -93,20 +104,24 @@ const DiagnosisChatbotHeader: React.FC<{
       <ChatbotHeaderMain>
         <ChatbotHeaderMenu aria-expanded={isDrawerOpen} onMenuToggle={() => setIsDrawerOpen(!isDrawerOpen)} />
         <ChatbotHeaderTitle>
-          <Content component='h2'>AI - Diagnosis</Content>
+          <Content component='h2'>{title}</Content>
         </ChatbotHeaderTitle>
       </ChatbotHeaderMain>
       <ChatbotHeaderActions>
         {modelName && <Label variant='outline'>{modelName}</Label>}
-        <ChatbotHeaderCloseButton onClick={() => setIsChatbotOpen(false)} />
+        {hasCloseButton && <ChatbotHeaderCloseButton onClick={() => setIsChatbotOpen(false)} />}
       </ChatbotHeaderActions>
     </ChatbotHeader>
   )
 }
 
-const DiagnosisChatbotContent: React.FC = () => {
+const ChatbotPanelContent: React.FC = () => {
   const { messages, announcement } = useContext(ChatbotContext)
+  const { username } = useContext(PageContext)
   const scrollToBottomRef = useRef<HTMLDivElement>(null)
+
+  const welcomeTitle = `Hello, ${username}!`
+  const welcomeDescription = 'How can I help you manage or diagnose your Java application?'
 
   useEffect(() => {
     if (messages.length > 2) {
@@ -117,6 +132,7 @@ const DiagnosisChatbotContent: React.FC = () => {
   return (
     <ChatbotContent>
       <MessageBox announcement={announcement}>
+        {messages.length === 0 && <ChatbotWelcomePrompt title={welcomeTitle} description={welcomeDescription} />}
         {messages.map((message, index) => (
           <React.Fragment key={message.id}>
             {index === messages.length - 1 && <div ref={scrollToBottomRef} />}
@@ -128,7 +144,7 @@ const DiagnosisChatbotContent: React.FC = () => {
   )
 }
 
-const DiagnosisChatbotFooter: React.FC = () => {
+const ChatbotPanelFooter: React.FC = () => {
   const { username } = useContext(PageContext)
   const { messages, setAnnouncement, isSendButtonDisabled, setIsSendButtonDisabled, updateConversations } =
     useContext(ChatbotContext)
@@ -179,81 +195,5 @@ const DiagnosisChatbotFooter: React.FC = () => {
       />
       <ChatbotFootnote label='AI may be inaccurate. Please verify important information.' />
     </ChatbotFooter>
-  )
-}
-
-export const ThinkInfo: React.FC<{ think: string }> = ({ think }) => {
-  return (
-    <Alert variant='info' title='Thinking' isExpandable>
-      <MarkdownContent content={think} />
-    </Alert>
-  )
-}
-
-export const ToolCallsInfo: React.FC<{ call: ToolCall; index: number }> = ({ call, index }) => {
-  return (
-    <Alert key={index} variant='info' customIcon={<WrenchIcon />} title={call.name}>
-      <p>Args: {JSON.stringify(call.args)} </p>
-    </Alert>
-  )
-}
-
-export const ToolCallsApprove: React.FC<{ toolCalls: ToolCall[] }> = ({ toolCalls }) => {
-  const { username } = useContext(PageContext)
-  const { messages, setAnnouncement, setIsSendButtonDisabled, updateConversations } = useContext(ChatbotContext)
-  const messagesRef = useRef(messages)
-
-  const approve = async (toolCalls: ToolCall[]) => {
-    log.debug('Approved', messagesRef.current)
-
-    setIsSendButtonDisabled(true)
-    const newMessages: MessageProps[] = []
-    newMessages.push(...messagesRef.current)
-    newMessages.push(aiService.createUserMessage(username, 'Approved'))
-    newMessages.push(aiService.createLoadingBotMessage())
-    updateConversations(newMessages)
-    // make announcement to assistive devices that new messages have been added
-    setAnnouncement(`User approved tool usage. Message from Bot is loading.`)
-    log.debug('approve - newMessages:', newMessages)
-
-    const dialogId = newMessages[0]!.id!
-    const answer = await aiService.invokeTools(dialogId, toolCalls)
-    log.debug('Answer:', answer)
-    const loadedMessages: MessageProps[] = []
-    loadedMessages.push(...newMessages)
-    log.debug('approve - loadedMessages:', loadedMessages)
-    // Remove the loading message
-    loadedMessages.pop()
-    const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
-    loadedMessages.push(botMessage)
-    updateConversations(loadedMessages)
-    setAnnouncement(`Message from Bot: ${answer}`)
-    setIsSendButtonDisabled(false)
-  }
-
-  const reject = () => {
-    log.debug('Rejected')
-
-    const dialogId = messages[0]?.id
-    if (dialogId) {
-      aiService.rejectTools(dialogId, toolCalls)
-    }
-    setIsSendButtonDisabled(true)
-    const newMessages: MessageProps[] = []
-    newMessages.push(...messages)
-    newMessages.push(aiService.createUserMessage(username, 'Rejected'))
-    updateConversations(newMessages)
-    setIsSendButtonDisabled(false)
-  }
-
-  return (
-    <Flex columnGap={{ default: 'columnGapSm' }}>
-      <Button variant='primary' onClick={() => approve(toolCalls)}>
-        Approve
-      </Button>
-      <Button variant='secondary' onClick={reject}>
-        Reject
-      </Button>
-    </Flex>
   )
 }

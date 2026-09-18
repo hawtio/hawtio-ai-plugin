@@ -14,13 +14,13 @@ import { DynamicStructuredTool } from '@langchain/core/tools'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatOllama } from '@langchain/ollama'
 import { ChatOpenAI } from '@langchain/openai'
-import { MessageExtraContent, MessageProps } from '@patternfly/chatbot/dist/esm/Message'
-import patternflyAvatar from '@patternfly/chatbot/patternfly-docs/content/extensions/chatbot/examples/Messages/patternfly_avatar.jpg'
+import { MessageExtraContent, MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
+import botAvatar from '@patternfly/chatbot/patternfly-docs/content/extensions/chatbot/examples/Messages/patternfly_avatar.jpg'
 import userAvatar from '@patternfly/react-core/dist/styles/assets/images/img_avatar-light.svg'
 import { ComponentType, createElement } from 'react'
-import { log } from '../jmx-ai/globals'
 import { AiModel } from './ai-model'
 import { aiPreferencesService } from './ai-preferences-service'
+import { log } from './globals'
 import { getWorkspaceTools } from './tools'
 
 const BOT_NAME = 'Hawtio AI'
@@ -80,7 +80,6 @@ class AiService implements IAiService {
           this.llm = new ChatOpenAI({
             model: this.model.id,
             apiKey: token,
-            temperature: 0,
             streaming: false,
           })
           break
@@ -229,7 +228,14 @@ class AiService implements IAiService {
 
   createUserMessage(name: string, content: string): MessageProps {
     const id = this.generateId()
-    return { id, role: 'user', content, name, avatar: userAvatar }
+    return {
+      id,
+      role: 'user',
+      content,
+      name,
+      avatar: userAvatar,
+      timestamp: new Date().toLocaleString(),
+    }
   }
 
   createLoadingBotMessage(): MessageProps {
@@ -238,7 +244,8 @@ class AiService implements IAiService {
       id,
       role: 'bot',
       name: BOT_NAME,
-      avatar: patternflyAvatar,
+      avatar: botAvatar,
+      avatarProps: { style: { fontSize: '90%' } },
       content: 'API response goes here',
       isLoading: true,
     }
@@ -250,10 +257,12 @@ class AiService implements IAiService {
       id,
       role: 'bot',
       name: BOT_NAME,
-      avatar: patternflyAvatar,
+      avatar: botAvatar,
+      avatarProps: { style: { fontSize: '90%' } },
       content,
       extraContent,
       isLoading: false,
+      timestamp: new Date().toLocaleString(),
     }
   }
 
