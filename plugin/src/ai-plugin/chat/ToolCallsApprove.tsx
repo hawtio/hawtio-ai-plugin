@@ -21,7 +21,8 @@ import { ToolCallsInfo } from './ToolCallsInfo'
  */
 export const ToolCallsApprove: React.FC<{
   toolCalls: ToolCall[]
-}> = ({ toolCalls }) => {
+  messageId: string
+}> = ({ toolCalls, messageId }) => {
   const { username } = useContext(PageContext)
   const { messages, setAnnouncement, setIsSendButtonDisabled, updateConversations } = useContext(ChatbotContext)
   const messagesRef = useRef(messages)
@@ -30,11 +31,17 @@ export const ToolCallsApprove: React.FC<{
     messagesRef.current = messages
   }, [messages])
 
+  const removeApproveButtons = (messages: MessageProps[]) => {
+    return messages.map(m =>
+      m.id === messageId ? { ...m, extraContent: { ...m.extraContent, afterMainContent: undefined } } : m,
+    )
+  }
+
   const approve = async (toolCalls: ToolCall[]) => {
     log.debug('ToolCallsApprove - Approved', messagesRef.current)
 
     setIsSendButtonDisabled(true)
-    const newMessages: MessageProps[] = [...messagesRef.current]
+    const newMessages: MessageProps[] = removeApproveButtons([...messagesRef.current])
     newMessages.push(aiService.createUserMessage(username, 'Approved'))
     newMessages.push(aiService.createLoadingBotMessage())
     updateConversations(newMessages)
@@ -58,7 +65,7 @@ export const ToolCallsApprove: React.FC<{
     if (dialogId) {
       aiService.rejectTools(dialogId, toolCalls)
     }
-    const newMessages: MessageProps[] = [...currentMessages]
+    const newMessages: MessageProps[] = removeApproveButtons([...currentMessages])
     newMessages.push(aiService.createUserMessage(username, 'Rejected'))
     updateConversations(newMessages)
   }
