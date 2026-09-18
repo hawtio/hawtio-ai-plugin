@@ -55,7 +55,7 @@ export interface IAiService {
     answer: AIMessage | string,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
-    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[] }>,
+    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
   ): MessageProps
 }
 
@@ -279,28 +279,29 @@ class AiService implements IAiService {
     answer: AIMessage | string,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
-    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[] }>,
+    ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
   ): MessageProps {
     if (typeof answer === 'string') {
       // Error
-      return aiService.createBotMessage(`Error: ${answer}`)
+      return this.createBotMessage(`Error: ${answer}`)
     }
 
     if (!answer.tool_calls || answer.tool_calls.length === 0) {
       // No tool calls
-      const { content, think } = aiService.extractThink(answer)
+      const { content, think } = this.extractThink(answer)
       const extraContent = think ? { beforeMainContent: createElement(ThinkInfo, { think }) } : undefined
-      return aiService.createBotMessage(content, extraContent)
+      return this.createBotMessage(content, extraContent)
     }
 
-    // Tool calls
+    // Tool calls — create the message first to get its id, then set extraContent
     const toolCalls = answer.tool_calls
     const content = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
-    const extraContent = {
+    const botMessage = this.createBotMessage(content)
+    botMessage.extraContent = {
       beforeMainContent: toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index })),
-      afterMainContent: createElement(ToolCallsApprove, { toolCalls }),
+      afterMainContent: createElement(ToolCallsApprove, { toolCalls, messageId: botMessage.id! }),
     }
-    return aiService.createBotMessage(content, extraContent)
+    return botMessage
   }
 }
 
