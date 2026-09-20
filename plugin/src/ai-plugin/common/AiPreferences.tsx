@@ -9,6 +9,7 @@ import {
   FormSelectOption,
   InputGroup,
   InputGroupItem,
+  NumberInput,
   Switch,
   TextInput,
 } from '@patternfly/react-core'
@@ -17,52 +18,55 @@ import EyeSlashIcon from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon'
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import React, { useState } from 'react'
 import { MODELS, PROVIDERS } from './ai-model'
-import { AiOptions, ToolPermissions, aiPreferencesService } from './ai-preferences-service'
+import {
+  AiOptions,
+  DEFAULT_MAX_AUTO_TOOL_STEPS,
+  DEFAULT_TOOL_PERMISSIONS,
+  aiPreferencesService,
+} from './ai-preferences-service'
 import { WORKSPACE_TOOLS_META } from './tools'
 
 export const AiPreferences: React.FC = () => {
   const [options, setOptions] = useState(aiPreferencesService.loadOptions())
 
-  const handleOptionsChange = (updated: Partial<AiOptions>) => {
-    aiPreferencesService.saveOptions(updated)
-    setOptions(prev => ({ ...prev, ...updated }))
-  }
-
-  const handlePermissionChange = (toolName: string, autoApprove: boolean) => {
-    const toolPermissions: ToolPermissions = { ...(options.toolPermissions ?? {}), [toolName]: autoApprove }
-    handleOptionsChange({ toolPermissions })
-  }
-
   return (
     <CardBody>
       <Form isHorizontal>
-        <ModelSection options={options} onOptionsChange={handleOptionsChange} />
-        <PermissionSection toolPermissions={options.toolPermissions} onPermissionChange={handlePermissionChange} />
+        <ModelForm options={options} setOptions={setOptions} />
+        <PermissionForm options={options} setOptions={setOptions} />
       </Form>
     </CardBody>
   )
 }
 
-const ModelSection: React.FC<{
+const ModelForm: React.FC<{
   options: AiOptions
-  onOptionsChange: (updated: Partial<AiOptions>) => void
-}> = ({ options, onOptionsChange }) => {
+  setOptions: React.Dispatch<React.SetStateAction<AiOptions>>
+}> = ({ options, setOptions }) => {
   const [provider, setProvider] = useState<string>(options.model.provider)
   const [models, setModels] = useState(MODELS.filter(m => m.provider === provider))
   const [passwordHidden, setPasswordHidden] = useState(true)
 
-  const updateProvider = (newProvider: string) => {
-    setProvider(newProvider)
-    setModels(MODELS.filter(m => m.provider === newProvider))
+  const updateProvider = (provider: string) => {
+    setProvider(provider)
+    setModels(MODELS.filter(m => m.provider === provider))
   }
 
-  const updateModel = (id: string) => {
-    const model = MODELS.find(m => m.id === id)
-    if (model) onOptionsChange({ model })
+  const updateModel = (updated: string) => {
+    const model = MODELS.find(m => m.id === updated)
+    if (model) {
+      aiPreferencesService.saveOptions({ model })
+      setOptions({ ...options, model })
+    }
+  }
+
+  const updateToken = (updated?: string) => {
+    aiPreferencesService.saveOptions({ token: updated })
+    setOptions({ ...options, token: updated })
   }
 
   return (
-    <FormSection title='AI' titleElement='h2'>
+    <FormSection title='Model' titleElement='h2'>
       <FormGroup fieldId='ai-prefs-form-provider' label='Provider'>
         <FormSelect
           id='ai-prefs-form-provider-input'
@@ -95,7 +99,7 @@ const ModelSection: React.FC<{
               aria-label='Form Select Token'
               type={passwordHidden ? 'password' : 'text'}
               value={options.token}
-              onChange={(_, token) => onOptionsChange({ token })}
+              onChange={(_, t) => updateToken(t)}
             />
           </InputGroupItem>
           <InputGroupItem>
@@ -113,42 +117,82 @@ const ModelSection: React.FC<{
   )
 }
 
-const PermissionSection: React.FC<{
-  toolPermissions: ToolPermissions | undefined
-  onPermissionChange: (toolName: string, autoApprove: boolean) => void
-}> = ({ toolPermissions, onPermissionChange }) => (
-  <FormSection title='Permission control' titleElement='h2'>
-    <FormGroup fieldId='ai-prefs-form-tool-permissions'>
-      <Content component='small'>
-        Enable auto-approve to allow a tool to run without asking for confirmation each time.
-      </Content>
-      <Table aria-label='Tool permissions' variant='compact' borders={false} style={{ marginTop: '0.5rem' }}>
-        <Thead>
-          <Tr>
-            <Th>Tool</Th>
-            <Th>Description</Th>
-            <Th>Auto-approve</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {WORKSPACE_TOOLS_META.map(({ name, description }) => (
-            <Tr key={name}>
-              <Td dataLabel='Tool'>
-                <strong>{name}</strong>
-              </Td>
-              <Td dataLabel='Description'>{description}</Td>
-              <Td dataLabel='Auto-approve'>
-                <Switch
-                  id={`ai-prefs-tool-switch-${name}`}
-                  aria-label={`Auto-approve ${name}`}
-                  isChecked={toolPermissions?.[name] ?? false}
-                  onChange={(_, checked) => onPermissionChange(name, checked)}
-                />
-              </Td>
+const PermissionForm: React.FC<{
+  options: AiOptions
+  setOptions: React.Dispatch<React.SetStateAction<AiOptions>>
+}> = ({ options, setOptions }) => {
+  const maxAutoToolSteps = options.maxAutoToolSteps ?? DEFAULT_MAX_AUTO_TOOL_STEPS
+  const toolPermissions = options.toolPermissions ?? DEFAULT_TOOL_PERMISSIONS
+
+  const updateMaxAutoToolSteps = (updated: number) => {
+    aiPreferencesService.saveOptions({ maxAutoToolSteps: updated })
+    setOptions({ ...options, maxAutoToolSteps: updated })
+  }
+
+  const updatePermission = (tool: string, updated: boolean) => {
+    const updatedPermissions = { ...toolPermissions, [tool]: updated }
+    aiPreferencesService.saveOptions({ toolPermissions: updatedPermissions })
+    setOptions({ ...options, toolPermissions: updatedPermissions })
+  }
+
+  return (
+    <FormSection title='Permission control' titleElement='h2'>
+      <FormGroup fieldId='ai-prefs-form-max-steps' label='Max auto-approve steps'>
+        <NumberInput
+          id='ai-prefs-form-max-steps-input'
+          aria-label='Form select max auto-approve steps'
+          value={options.maxAutoToolSteps}
+          min={1}
+          max={100}
+          onMinus={() => updateMaxAutoToolSteps(Math.max(1, maxAutoToolSteps - 1))}
+          onPlus={() => updateMaxAutoToolSteps(Math.min(100, maxAutoToolSteps + 1))}
+          onChange={e => {
+            const value = parseInt((e.target as HTMLInputElement).value)
+            if (!isNaN(value) && value >= 1 && value <= 100) {
+              updateMaxAutoToolSteps(value)
+            }
+          }}
+        />
+      </FormGroup>
+      <FormGroup fieldId='ai-prefs-form-tool-permissions' style={{ display: 'flex', minWidth: 'fit-content' }}>
+        <Content component='small'>
+          Enable auto-approve to allow a tool to run without asking for confirmation each time.
+        </Content>
+        <Table
+          aria-label='Tool permissions'
+          variant='compact'
+          borders={false}
+          isStriped
+          isStickyHeader
+          style={{ marginTop: '0.5rem' }}
+        >
+          <Thead>
+            <Tr>
+              <Th modifier='fitContent'>Tool</Th>
+              <Th modifier='wrap'>Description</Th>
+              <Th modifier='fitContent'>Auto-approve</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </FormGroup>
-  </FormSection>
-)
+          </Thead>
+          <Tbody>
+            {WORKSPACE_TOOLS_META.map(({ name, description }) => (
+              <Tr key={name}>
+                <Td dataLabel='Tool'>
+                  <b>{name}</b>
+                </Td>
+                <Td dataLabel='Description'>{description}</Td>
+                <Td dataLabel='Auto-approve' textCenter>
+                  <Switch
+                    id={`ai-prefs-tool-switch-${name}`}
+                    aria-label={`Auto-approve ${name}`}
+                    isChecked={toolPermissions[name] ?? false}
+                    onChange={(_, checked) => updatePermission(name, checked)}
+                  />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </FormGroup>
+    </FormSection>
+  )
+}

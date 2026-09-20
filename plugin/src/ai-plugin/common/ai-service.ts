@@ -54,6 +54,7 @@ export interface IAiService {
     dialogId: string,
     toolCalls: ToolCall[],
     onMessage?: (answer: AIMessage) => void,
+    step?: number,
   ): Promise<AIMessage | string>
   hasToolCalls(answer: AIMessage | string): answer is AIMessage
   rejectTools(dialogId: string, toolCalls: ToolCall[]): void
@@ -187,35 +188,48 @@ class AiService implements IAiService {
       this.memory[dialogId] = messages
     }
     messages.push(new HumanMessage(message))
-    let answer = await this.invoke(messages)
+    const answer = await this.invoke(messages)
     if (typeof answer !== 'string') {
       messages.push(answer)
     }
     log.debug('Current messages:', messages)
 
-    // Auto-approve loop: keep invoking tools as long as the LLM requests
-    // tool calls that are all pre-approved, notifying the UI for each step.
-    const { toolPermissions } = aiPreferencesService.loadOptions()
-    while (this.hasToolCalls(answer)) {
-      if (!answer.tool_calls!.every(call => toolPermissions?.[call.name] === true)) {
-        // At least one tool needs manual approval — stop and let the UI handle it
-        break
+    // If the LLM requests auto-approved tool calls, delegate to invokeTools which
+    // handles the full auto-approve loop with a step limit.
+    if (this.hasToolCalls(answer)) {
+      const { toolPermissions } = aiPreferencesService.loadOptions()
+      if (answer.tool_calls!.every(call => toolPermissions?.[call.name] === true)) {
+        onMessage?.(answer)
+        return this.invokeTools(dialogId, answer.tool_calls!, onMessage)
       }
-      onMessage?.(answer)
-      answer = await this.invokeTools(dialogId, answer.tool_calls!, onMessage, toolPermissions)
     }
 
     return answer
   }
 
+  /**
+   * Executes the given tool calls and invokes the LLM with the results.
+   * If the LLM responds with further tool calls that are all auto-approved,
+   * this method recurses (up to {@link maxAutoToolSteps} times) to continue
+   * the chain without interruption. Tool calls that are not auto-approved are
+   * returned as-is so the caller can decide to approve or reject them.
+   *
+   * @param step - Current recursion depth; used to enforce the step limit.
+   */
   async invokeTools(
     dialogId: string,
     toolCalls: ToolCall[],
     onMessage?: (answer: AIMessage) => void,
-    toolPermissions = aiPreferencesService.loadOptions().toolPermissions,
+    step = 0,
   ): Promise<AIMessage | string> {
     if (!this.llmWithTools) {
       return 'Tool invocation not supported'
+    }
+
+    const { toolPermissions, maxAutoToolSteps } = aiPreferencesService.loadOptions()
+    if (step >= maxAutoToolSteps!) {
+      log.warn(`Auto-tool execution stopped after ${maxAutoToolSteps} steps to prevent runaway execution.`)
+      return `Stopped after ${maxAutoToolSteps} automatic tool-call steps. You can increase the limit in Preferences.`
     }
 
     let messages = this.memory[dialogId]
@@ -240,10 +254,10 @@ class AiService implements IAiService {
       }
       log.debug('Messages>>', messages)
 
-      // If the LLM requests more auto-approved tool calls, recurse
+      // If the LLM requests more auto-approved tool calls, recurse with incremented step counter
       if (this.hasToolCalls(answer) && answer.tool_calls!.every(call => toolPermissions?.[call.name] === true)) {
         onMessage?.(answer)
-        return this.invokeTools(dialogId, answer.tool_calls!, onMessage, toolPermissions)
+        return this.invokeTools(dialogId, answer.tool_calls!, onMessage, step + 1)
       }
 
       return answer
