@@ -78,6 +78,7 @@ export const ToolCallsApprove: React.FC<{
     const newMessages = removeApproveButtons([...currentMessages])
     newMessages.push(aiService.createUserMessage(username, 'Rejected'))
     updateConversations(newMessages)
+    setIsSendButtonDisabled(false)
   }
 
   return (
