@@ -175,3 +175,6 @@ export function getWorkspaceTools(): DynamicStructuredTool[] {
     executeMBeanOperationTool(),
   ]
 }
+
+/** Metadata for all workspace tools, derived from tool definitions for the AI Preferences UI. */
+export const WORKSPACE_TOOLS_META = getWorkspaceTools().map(({ name, description }) => ({ name, description }))

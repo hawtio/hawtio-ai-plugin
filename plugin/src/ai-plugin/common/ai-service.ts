@@ -44,15 +44,25 @@ export type LLM = ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatOlla
 export interface IAiService {
   reset(model: AiModel): void
   getModel(): AiModel | undefined
-  newChat(dialogId: string, message: string, system?: string): Promise<AIMessage | string>
-  chat(dialogId: string, message: string): Promise<AIMessage | string>
-  invokeTools(dialogId: string, toolCalls: ToolCall[]): Promise<AIMessage | string>
+  newChat(
+    dialogId: string,
+    initialMessage: { message: string; system?: string },
+    onMessage?: (answer: AIMessage) => void,
+  ): Promise<AIMessage | string>
+  chat(dialogId: string, message: string, onMessage?: (answer: AIMessage) => void): Promise<AIMessage | string>
+  invokeTools(
+    dialogId: string,
+    toolCalls: ToolCall[],
+    onMessage?: (answer: AIMessage) => void,
+  ): Promise<AIMessage | string>
+  hasToolCalls(answer: AIMessage | string): answer is AIMessage
   rejectTools(dialogId: string, toolCalls: ToolCall[]): void
   createUserMessage(name: string, content: string): MessageProps
   createLoadingBotMessage(): MessageProps
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
   toBotMessage(
     answer: AIMessage | string,
+    autoApprove: boolean,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
     ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
@@ -152,32 +162,58 @@ class AiService implements IAiService {
     }
   }
 
-  newChat(dialogId: string, message: string, system?: string): Promise<AIMessage | string> {
+  newChat(
+    dialogId: string,
+    initialMessage: { message: string; system?: string },
+    onMessage?: (answer: AIMessage) => void,
+  ): Promise<AIMessage | string> {
+    const { message, system } = initialMessage
     if (system) {
       this.memory[dialogId] = [new SystemMessage(system)]
     } else {
       this.memory[dialogId] = []
     }
-    return this.chat(dialogId, message)
+    return this.chat(dialogId, message, onMessage)
   }
 
-  async chat(dialogId: string, message: string): Promise<AIMessage | string> {
+  hasToolCalls(answer: AIMessage | string): answer is AIMessage {
+    return typeof answer !== 'string' && (answer.tool_calls?.length ?? 0) > 0
+  }
+
+  async chat(dialogId: string, message: string, onMessage?: (answer: AIMessage) => void): Promise<AIMessage | string> {
     let messages = this.memory[dialogId]
     if (!messages) {
       messages = []
       this.memory[dialogId] = messages
     }
     messages.push(new HumanMessage(message))
-    const answer = await this.invoke(messages)
+    let answer = await this.invoke(messages)
     if (typeof answer !== 'string') {
-      // Non-error answer
       messages.push(answer)
     }
     log.debug('Current messages:', messages)
+
+    // Auto-approve loop: keep invoking tools as long as the LLM requests
+    // tool calls that are all pre-approved, notifying the UI for each step.
+    const { toolPermissions } = aiPreferencesService.loadOptions()
+    while (this.hasToolCalls(answer)) {
+      if (!answer.tool_calls!.every(call => toolPermissions?.[call.name] === true)) {
+        // At least one tool needs manual approval — stop and let the UI handle it
+        break
+      }
+      onMessage?.(answer)
+      answer = await this.invokeTools(dialogId, answer.tool_calls!, onMessage, toolPermissions)
+    }
+
     return answer
   }
 
-  async invokeTools(dialogId: string, toolCalls: ToolCall[]): Promise<AIMessage | string> {
+  async invokeTools(
+    dialogId: string,
+    toolCalls: ToolCall[],
+    onMessage?: (answer: AIMessage) => void,
+    toolPermissions = aiPreferencesService.loadOptions().toolPermissions,
+  ): Promise<AIMessage | string> {
     if (!this.llmWithTools) {
       return 'Tool invocation not supported'
     }
@@ -198,12 +234,19 @@ class AiService implements IAiService {
           messages.push(toolAnswer)
         }
       }
-      const finalAnswer = await this.llmWithTools.invoke(messages)
-      if (finalAnswer) {
-        messages.push(finalAnswer)
+      const answer = await this.llmWithTools.invoke(messages)
+      if (answer) {
+        messages.push(answer)
       }
       log.debug('Messages>>', messages)
-      return finalAnswer
+
+      // If the LLM requests more auto-approved tool calls, recurse
+      if (this.hasToolCalls(answer) && answer.tool_calls!.every(call => toolPermissions?.[call.name] === true)) {
+        onMessage?.(answer)
+        return this.invokeTools(dialogId, answer.tool_calls!, onMessage, toolPermissions)
+      }
+
+      return answer
     } catch (error) {
       log.error('Error while invoking tools:', error)
       return String(error)
@@ -277,6 +320,7 @@ class AiService implements IAiService {
 
   toBotMessage(
     answer: AIMessage | string,
+    autoApprove: boolean,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
     ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
@@ -287,19 +331,22 @@ class AiService implements IAiService {
     }
 
     if (!answer.tool_calls || answer.tool_calls.length === 0) {
-      // No tool calls
+      // No tool calls — normal text response
       const { content, think } = this.extractThink(answer)
       const extraContent = think ? { beforeMainContent: createElement(ThinkInfo, { think }) } : undefined
       return this.createBotMessage(content, extraContent)
     }
 
-    // Tool calls — create the message first to get its id, then set extraContent
+    // Tool calls — show which tools are being used
     const toolCalls = answer.tool_calls
-    const content = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
+    const base = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
+    const content = autoApprove ? `${base} (Auto-approved)` : base
     const botMessage = this.createBotMessage(content)
     botMessage.extraContent = {
       beforeMainContent: toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index })),
-      afterMainContent: createElement(ToolCallsApprove, { toolCalls, messageId: botMessage.id! }),
+      afterMainContent: autoApprove
+        ? undefined
+        : createElement(ToolCallsApprove, { toolCalls, messageId: botMessage.id! }),
     }
     return botMessage
   }
