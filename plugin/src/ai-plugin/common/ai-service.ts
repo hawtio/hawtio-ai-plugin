@@ -76,6 +76,12 @@ class AiService implements IAiService {
   private llmWithTools?: Runnable<BaseLanguageModelInput, AIMessageChunk>
   private memory: Record<string, BaseMessage[]> = {}
 
+  private appendToolMessages(messages: BaseMessage[], toolCalls: ToolCall[], content: string): void {
+    for (const call of toolCalls) {
+      messages.push(new ToolMessage({ tool_call_id: call.id ?? call.name, content }))
+    }
+  }
+
   reset(model: AiModel): void {
     if (this.model && this.model.id === model.id && this.llm && (!model.tool || this.llmWithTools)) {
       return
@@ -226,16 +232,18 @@ class AiService implements IAiService {
       return 'Tool invocation not supported'
     }
 
-    const { toolPermissions, maxAutoToolSteps } = aiPreferencesService.loadOptions()
-    if (step >= maxAutoToolSteps!) {
-      log.warn(`Auto-tool execution stopped after ${maxAutoToolSteps} steps to prevent runaway execution.`)
-      return `Stopped after ${maxAutoToolSteps} automatic tool-call steps. You can increase the limit in Preferences.`
-    }
-
     let messages = this.memory[dialogId]
     if (!messages) {
       messages = []
       this.memory[dialogId] = messages
+    }
+
+    const { toolPermissions, maxAutoToolSteps } = aiPreferencesService.loadOptions()
+    if (step >= maxAutoToolSteps!) {
+      const limitMessage = `Automatic tool-call step limit reached after ${maxAutoToolSteps} steps.`
+      this.appendToolMessages(messages, toolCalls, limitMessage)
+      log.warn(`Auto-tool execution stopped after ${maxAutoToolSteps} steps to prevent runaway execution.`)
+      return `Stopped after ${maxAutoToolSteps} automatic tool-call steps. You can increase the limit in Preferences.`
     }
 
     try {
@@ -270,9 +278,7 @@ class AiService implements IAiService {
   rejectTools(dialogId: string, toolCalls: ToolCall[]): void {
     const messages = this.memory[dialogId]
     if (!messages) return
-    for (const call of toolCalls) {
-      messages.push(new ToolMessage({ tool_call_id: call.id ?? call.name, content: 'User rejected' }))
-    }
+    this.appendToolMessages(messages, toolCalls, 'User rejected')
     log.debug(
       'rejectTools - added rejection ToolMessages for:',
       toolCalls.map(c => c.name),
