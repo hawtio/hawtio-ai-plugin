@@ -24,6 +24,7 @@ import {
   DEFAULT_TOOL_PERMISSIONS,
   aiPreferencesService,
 } from './ai-preferences-service'
+import './AiPreferences.css'
 import { WORKSPACE_TOOLS_META } from './tools'
 
 export const AiPreferences: React.FC = () => {
@@ -31,7 +32,7 @@ export const AiPreferences: React.FC = () => {
 
   return (
     <CardBody>
-      <Form isHorizontal>
+      <Form id='ai-prefs-form' isHorizontal>
         <ModelForm options={options} setOptions={setOptions} />
         <PermissionForm options={options} setOptions={setOptions} />
       </Form>
@@ -154,7 +155,7 @@ const PermissionForm: React.FC<{
           }}
         />
       </FormGroup>
-      <FormGroup fieldId='ai-prefs-form-tool-permissions' style={{ display: 'flex', minWidth: 'fit-content' }}>
+      <FormGroup fieldId='ai-prefs-form-tool-permissions' style={{ display: 'flex' }}>
         <Content component='small'>
           Enable auto-approve to allow a tool to run without asking for confirmation each time.
         </Content>
