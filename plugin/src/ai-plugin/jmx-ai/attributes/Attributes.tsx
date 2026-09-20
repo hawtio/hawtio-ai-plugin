@@ -186,13 +186,13 @@ const AiJmxToolbar: React.FC<{
     log.debug('diagnose - new messages:', newMessages)
 
     const dialogId = newMessages[0]!.id!
-    const answer = await aiService.newChat(dialogId, diagnoseMessage, systemMessage)
+    const answer = await aiService.newChat(dialogId, { message: diagnoseMessage, system: systemMessage })
     const loadedMessages: MessageProps[] = []
     loadedMessages.push(...newMessages)
     log.debug('diagnose - loaded messages:', loadedMessages)
     // Remove the loading message
     loadedMessages.pop()
-    const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
+    const botMessage = aiService.toBotMessage(answer, false, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
     updateConversations(loadedMessages)
     setAnnouncement('Diagnosis complete.')

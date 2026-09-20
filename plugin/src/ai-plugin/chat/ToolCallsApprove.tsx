@@ -1,4 +1,5 @@
 import { PageContext } from '@hawtio/react/ui'
+import { AIMessage } from '@langchain/core/messages'
 import { ToolCall } from '@langchain/core/messages/tool'
 import { MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
 import { Button, Flex } from '@patternfly/react-core'
@@ -41,21 +42,30 @@ export const ToolCallsApprove: React.FC<{
     log.debug('ToolCallsApprove - Approved', messagesRef.current)
 
     setIsSendButtonDisabled(true)
-    const newMessages: MessageProps[] = removeApproveButtons([...messagesRef.current])
+    const newMessages = removeApproveButtons([...messagesRef.current])
     newMessages.push(aiService.createUserMessage(username, 'Approved'))
     newMessages.push(aiService.createLoadingBotMessage())
     updateConversations(newMessages)
     setAnnouncement(`User approved tool usage. Message from Bot is loading.`)
 
     const dialogId = newMessages[0]!.id!
-    const answer = await aiService.invokeTools(dialogId, toolCalls)
-    const loadedMessages: MessageProps[] = [...newMessages]
+    const loadedMessages = [...newMessages]
+    const answer = await aiService.invokeTools(dialogId, toolCalls, (intermediateAnswer: AIMessage) => {
+      // Remove loading, insert intermediate tool-calls message, re-add loading
+      loadedMessages.pop()
+      loadedMessages.push(aiService.toBotMessage(intermediateAnswer, true, ThinkInfo, ToolCallsInfo, ToolCallsApprove))
+      loadedMessages.push(aiService.createLoadingBotMessage())
+      updateConversations([...loadedMessages])
+    })
     loadedMessages.pop()
-    const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
+    const botMessage = aiService.toBotMessage(answer, false, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
-    updateConversations(loadedMessages)
+    updateConversations([...loadedMessages])
     setAnnouncement(`Message from Bot: ${answer}`)
-    setIsSendButtonDisabled(false)
+    // Keep send button disabled if waiting for user to approve/reject further tool calls
+    if (!aiService.hasToolCalls(answer)) {
+      setIsSendButtonDisabled(false)
+    }
   }
 
   const reject = () => {
@@ -65,7 +75,7 @@ export const ToolCallsApprove: React.FC<{
     if (dialogId) {
       aiService.rejectTools(dialogId, toolCalls)
     }
-    const newMessages: MessageProps[] = removeApproveButtons([...currentMessages])
+    const newMessages = removeApproveButtons([...currentMessages])
     newMessages.push(aiService.createUserMessage(username, 'Rejected'))
     updateConversations(newMessages)
   }

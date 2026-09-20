@@ -18,6 +18,7 @@ import MessageBar from '@patternfly/chatbot/dist/dynamic/MessageBar'
 import MessageBox from '@patternfly/chatbot/dist/dynamic/MessageBox'
 import { Content, Label } from '@patternfly/react-core'
 import React, { Dispatch, useContext, useEffect, useRef, useState } from 'react'
+import { AIMessage } from '@langchain/core/messages'
 import { aiService } from '../common/ai-service'
 import { ChatbotContext } from './context'
 import { log } from './globals'
@@ -171,19 +172,30 @@ const ChatbotPanelFooter: React.FC = () => {
     log.debug('handleSend - new messages:', newMessages)
 
     const dialogId = newMessages[0]!.id!
+    const loadedMessages: MessageProps[] = [...newMessages]
+
+    const onMessage = (intermediateAnswer: AIMessage) => {
+      // Remove loading, insert intermediate tool-calls message, re-add loading
+      loadedMessages.pop()
+      loadedMessages.push(aiService.toBotMessage(intermediateAnswer, true, ThinkInfo, ToolCallsInfo, ToolCallsApprove))
+      loadedMessages.push(aiService.createLoadingBotMessage())
+      updateConversations([...loadedMessages])
+    }
+
     const answer = await (newMessages.length === 2
-      ? aiService.newChat(dialogId, message)
-      : aiService.chat(dialogId, message))
-    const loadedMessages: MessageProps[] = []
-    loadedMessages.push(...newMessages)
+      ? aiService.newChat(dialogId, { message }, onMessage)
+      : aiService.chat(dialogId, message, onMessage))
     log.debug('handleSend - loaded messages:', loadedMessages)
-    // Remove the loading message
+    // Remove the loading message, replace with the final bot message
     loadedMessages.pop()
-    const botMessage = aiService.toBotMessage(answer, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
+    const botMessage = aiService.toBotMessage(answer, false, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
     loadedMessages.push(botMessage)
-    updateConversations(loadedMessages)
+    updateConversations([...loadedMessages])
     setAnnouncement(`Message from Bot: ${answer}`)
-    setIsSendButtonDisabled(false)
+    // Keep send button disabled if waiting for user to approve/reject tool calls
+    if (!aiService.hasToolCalls(answer)) {
+      setIsSendButtonDisabled(false)
+    }
   }
 
   return (
