@@ -360,19 +360,18 @@ class AiService implements IAiService {
     // Tool calls — show which tools are being used
     const toolCalls = answer.tool_calls
     const isMultiple = toolCalls.length > 1
+    const toolNames = toolCalls
+      .map(call => `**${call.name}**`)
+      .filter((name, index, self) => self.indexOf(name) === index)
+      .join(', ')
     const beforeMainContent = toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index }))
 
     if (autoApproved) {
-      // Extract unique tool names
-      const toolNames = toolCalls
-        .map(call => `**${call.name}**`)
-        .filter((name, index, self) => self.indexOf(name) === index)
-        .join(', ')
-      const content = `Auto-approved tool ${isMultiple ? 'calls' : 'call'}: ${toolNames}`
+      const content = `Auto-approved ${isMultiple ? 'tool calls' : 'a tool call'}: ${toolNames}`
       return this.createBotMessage(content, { beforeMainContent })
     }
 
-    const content = `${BOT_NAME} wants to use ${isMultiple ? 'tools' : 'a tool'}`
+    const content = `${BOT_NAME} wants to use ${isMultiple ? 'tools' : 'a tool'}: ${toolNames}`
     const botMessage = this.createBotMessage(content)
     botMessage.extraContent = {
       beforeMainContent,
