@@ -13,6 +13,11 @@ export type AiOptions = {
   model: AiModel
   token?: string
   toolPermissions?: ToolPermissions
+  /**
+   * Maximum number of consecutive auto-approved tool-call steps per chat turn.
+   * Prevents runaway execution when the LLM repeatedly emits approved tool calls.
+   */
+  maxAutoToolSteps?: number
 }
 
 /**
@@ -28,9 +33,12 @@ export const DEFAULT_TOOL_PERMISSIONS: ToolPermissions = {
   executeMBeanOperation: false,
 }
 
+export const DEFAULT_MAX_AUTO_TOOL_STEPS = 10
+
 export const DEFAULT_OPTIONS: AiOptions = {
   model: MODELS[0]!,
   toolPermissions: DEFAULT_TOOL_PERMISSIONS,
+  maxAutoToolSteps: DEFAULT_MAX_AUTO_TOOL_STEPS,
 } as const
 
 export interface IAiPreferencesService {
