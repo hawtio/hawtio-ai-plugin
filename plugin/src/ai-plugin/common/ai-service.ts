@@ -63,7 +63,7 @@ export interface IAiService {
   createBotMessage(content: string, extraContent?: MessageExtraContent): MessageProps
   toBotMessage(
     answer: AIMessage | string,
-    autoApprove: boolean,
+    autoApproved: boolean,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
     ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
@@ -340,7 +340,7 @@ class AiService implements IAiService {
 
   toBotMessage(
     answer: AIMessage | string,
-    autoApprove: boolean,
+    autoApproved: boolean,
     ThinkInfo: ComponentType<{ think: string }>,
     ToolCallsInfo: ComponentType<{ call: ToolCall; index: number }>,
     ToolCallsApprove: ComponentType<{ toolCalls: ToolCall[]; messageId: string }>,
@@ -359,14 +359,24 @@ class AiService implements IAiService {
 
     // Tool calls — show which tools are being used
     const toolCalls = answer.tool_calls
-    const base = `${BOT_NAME} wants to use ` + (toolCalls.length > 1 ? 'tools' : 'a tool')
-    const content = autoApprove ? `${base} (Auto-approved)` : base
+    const isMultiple = toolCalls.length > 1
+    const beforeMainContent = toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index }))
+
+    if (autoApproved) {
+      // Extract unique tool names
+      const toolNames = toolCalls
+        .map(call => `**${call.name}**`)
+        .filter((name, index, self) => self.indexOf(name) === index)
+        .join(', ')
+      const content = `Auto-approved tool ${isMultiple ? 'calls' : 'call'}: ${toolNames}`
+      return this.createBotMessage(content, { beforeMainContent })
+    }
+
+    const content = `${BOT_NAME} wants to use ${isMultiple ? 'tools' : 'a tool'}`
     const botMessage = this.createBotMessage(content)
     botMessage.extraContent = {
-      beforeMainContent: toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index })),
-      afterMainContent: autoApprove
-        ? undefined
-        : createElement(ToolCallsApprove, { toolCalls, messageId: botMessage.id! }),
+      beforeMainContent,
+      afterMainContent: createElement(ToolCallsApprove, { toolCalls, messageId: botMessage.id! }),
     }
     return botMessage
   }
