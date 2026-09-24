@@ -14,7 +14,7 @@ export const ToolCallsInfo: React.FC<{
   index: number
 }> = ({ call, index }) => {
   return (
-    <Alert key={index} variant='info' customIcon={<WrenchIcon />} title={call.name}>
+    <Alert key={index} variant='info' customIcon={<WrenchIcon />} title={call.name} isInline>
       <p>Args: {JSON.stringify(call.args)}</p>
     </Alert>
   )

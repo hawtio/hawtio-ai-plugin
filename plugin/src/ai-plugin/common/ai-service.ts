@@ -367,7 +367,7 @@ class AiService implements IAiService {
     const beforeMainContent = toolCalls.map((call, index) => createElement(ToolCallsInfo, { key: index, call, index }))
 
     if (autoApproved) {
-      const content = `Auto-approved ${isMultiple ? 'tool calls' : 'a tool call'}: ${toolNames}`
+      const content = `Auto-approved ${toolCalls.length} tool ${isMultiple ? 'calls' : 'call'}: ${toolNames}`
       return this.createBotMessage(content, { beforeMainContent })
     }
 
