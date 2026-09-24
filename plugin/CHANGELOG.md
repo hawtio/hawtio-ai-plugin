@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.0](///compare/v0.2.2...v0.3.0) (2026-09-24)
+
+
+### Features
+
+* add max auto-approve steps limit for workspace tool calls d92e5e3
+* add new Chat AI view 43c3ef9
+* add permission control (auto-approval) for workspace tools a301880, closes #92
+* implement workspace tools f8d71b8, closes #41
+* show auto-approved tool names in bot message dcb4768
+* show tool names in manual approval request message afc4f22
+
+
+### Bug Fixes
+
+* handle tool call errors, rejection state, and input validation b869201
+* re-enable send button after rejecting a tool call e20276f
+* remove approve/reject buttons after tool call decision 433289b
+* resolve pending tool calls when auto-tool limit is reached 54fbeb9
+* upgrade react-router to 7.18.3 for @hawtio/react 2.3.0 711d530
+* workaround max-width in AI prefs 02ff173
+
 ## [0.2.2](///compare/v0.2.1...v0.2.2) (2026-06-19)
 
 
