@@ -5,6 +5,14 @@
 
 This is an extension plugin that adds AI functionality to Hawtio. This plugin is intended for use with [Hawtio v5](https://github.com/hawtio/hawtio).
 
+## Version Compatibility Matrix
+
+| AI Plugin | Hawtio | @hawtio/react |
+| ----- | ----- | ----- |
+| 0.3.x | 5.3.x | 2.3.0 |
+| 0.2.x | 5.2.x | 2.2.1 |
+| 0.1.x | 5.1.x | 2.2.0 |
+
 ## Installation
 
 ### Maven
@@ -60,7 +68,7 @@ The test application's Hawtio console can be accessed at: <http://localhost:8080
 > **Faster plugin development cycle**
 >
 > You can develop a plugin step by step by running `mvn install` or `mvn spring-boot:run` while checking the behaviour in the browser each time, but in this way you cannot run a quick development feedback cycle.
-> 
+>
 > You can instead develop the frontend project of the plugin in a fast feedback cycle by running the test application on the backend while starting the plugin itself in development mode with `yarn start`, as follows.
 
 To develop the plugin, firstly launch the test application on the backend:
