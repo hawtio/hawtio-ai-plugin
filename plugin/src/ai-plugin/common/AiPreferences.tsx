@@ -50,7 +50,10 @@ const ModelForm: React.FC<{
 
   const updateProvider = (provider: string) => {
     setProvider(provider)
-    setModels(MODELS.filter(m => m.provider === provider))
+    const models = MODELS.filter(m => m.provider === provider)
+    setModels(models)
+    // Set the first model for the selected provider
+    updateModel(models[0]!.id)
   }
 
   const updateModel = (updated: string) => {
