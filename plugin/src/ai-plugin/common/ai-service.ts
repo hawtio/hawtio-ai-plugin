@@ -104,7 +104,6 @@ class AiService implements IAiService {
           this.llm = new ChatAnthropic({
             model: this.model.id,
             apiKey: token,
-            temperature: 0,
             streaming: false,
           })
           break
