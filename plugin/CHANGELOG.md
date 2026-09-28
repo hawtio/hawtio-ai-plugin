@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.1](///compare/v0.3.0...v0.3.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* Anthropic models fail due to unsupported temperature parameter 3203da1
+* model not saved when switching provider in AI preferences e6d8d17
+
 ## [0.3.0](///compare/v0.2.2...v0.3.0) (2026-09-24)
 
 
