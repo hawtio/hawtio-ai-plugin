@@ -5,11 +5,12 @@ __metadata:
   version: 10
   cacheKey: 10
 
-"@anthropic-ai/sdk@npm:^0.90.0":
-  version: 0.90.0
-  resolution: "@anthropic-ai/sdk@npm:0.90.0"
+"@anthropic-ai/sdk@npm:^0.122.0":
+  version: 0.122.0
+  resolution: "@anthropic-ai/sdk@npm:0.122.0"
   dependencies:
     json-schema-to-ts: "npm:^3.1.1"
+    standardwebhooks: "npm:^1.0.0"
   peerDependencies:
     zod: ^3.25.0 || ^4.0.0
   peerDependenciesMeta:
@@ -17,7 +18,7 @@ __metadata:
       optional: true
   bin:
     anthropic-ai-sdk: bin/cli
-  checksum: 10/6a256cde39b1b2ac3b6a4af9b25ab6d7f93db98f4c0f9a970f239324a06f4d6ca5ee84c61618ad5ebf38b46785d55f67fceee373716482083955524a828e5ee7
+  checksum: 10/d84d80df7febb6b1e61a6e12ac6a538c5239074147578e477d4e88e9f00db30d006395ab60ef91b2ff9d123879b33dd8023670cff6c69c01faf00d7eb1ad31aa
   languageName: node
   linkType: hard
 
@@ -1449,14 +1450,14 @@ __metadata:
   linkType: hard
 
 "@langchain/anthropic@npm:^1.3.27":
-  version: 1.3.28
-  resolution: "@langchain/anthropic@npm:1.3.28"
+  version: 1.5.11
+  resolution: "@langchain/anthropic@npm:1.5.11"
   dependencies:
-    "@anthropic-ai/sdk": "npm:^0.90.0"
+    "@anthropic-ai/sdk": "npm:^0.122.0"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.1.42
-  checksum: 10/46fd319461b8f9777f18fcb6a7d8b4d0716b7ccfcd1ba36375b1e0a72bd8ee0275f63dce7829ca0ff759d95ab81b62126510ae93e66e9debe9140d7bbc0cda59
+    "@langchain/core": ^1.2.12
+  checksum: 10/bad84a58979ff26cbb760f5d806b1209b846f7bc3fdd402b28009049a1ada8461c27328630470bf0d05b04e01d56b99b9c3791ec167214642a2fa8d8e246e56e
   languageName: node
   linkType: hard
 
@@ -2889,6 +2890,13 @@ __metadata:
   dependencies:
     "@sinonjs/commons": "npm:^3.0.1"
   checksum: 10/3960a9fe065f38a4228c66d184eeb101e8a6af9cbfc8454dd5d45ac397201da72134048d4e808a25993494885b172dd6deecdad9949bbf4c1d3a220ef561f6cc
+  languageName: node
+  linkType: hard
+
+"@stablelib/base64@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "@stablelib/base64@npm:1.0.1"
+  checksum: 10/93f3edb05d5a828a775d23ebde49884abeb456b8946942acbe6a0815630e769c59c06c7275983031c8707bdcefc1c62917aaa99522ff1ec5f457704c83b686da
   languageName: node
   linkType: hard
 
@@ -6423,6 +6431,13 @@ __metadata:
   version: 2.1.0
   resolution: "fast-json-stable-stringify@npm:2.1.0"
   checksum: 10/2c20055c1fa43c922428f16ca8bb29f2807de63e5c851f665f7ac9790176c01c3b40335257736b299764a8d383388dabc73c8083b8e1bc3d99f0a941444ec60e
+  languageName: node
+  linkType: hard
+
+"fast-sha256@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "fast-sha256@npm:1.3.0"
+  checksum: 10/3bef0491f10a254348ec11dcddb26e4d951cfd3b4c0662ea5843ad1be3fe184ed74d640df68565fcc60f6437548cddf49e3ac886f88a69e05b5142e862840bf9
   languageName: node
   linkType: hard
 
@@ -11666,6 +11681,16 @@ __metadata:
   dependencies:
     escape-string-regexp: "npm:^2.0.0"
   checksum: 10/cdc988acbc99075b4b036ac6014e5f1e9afa7e564482b687da6384eee6a1909d7eaffde85b0a17ffbe186c5247faf6c2b7544e802109f63b72c7be69b13151bb
+  languageName: node
+  linkType: hard
+
+"standardwebhooks@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "standardwebhooks@npm:1.1.1"
+  dependencies:
+    "@stablelib/base64": "npm:^1.0.0"
+    fast-sha256: "npm:^1.3.0"
+  checksum: 10/50d1f5b923eacfc7a78ad45c3364f3879d47a6f2231c96c7d8efec8153f5405f847ee3d7b990fa22c1c0ed208beadba8777688c34b5c9a88b4004bb81a512400
   languageName: node
   linkType: hard
 
