@@ -22,7 +22,7 @@ hawtio:
   authenticationEnabled: false
   http:
     csp:
-      connectSrc: https://generativelanguage.googleapis.com
+      connectSrc: https://api.openai.com, https://api.anthropic.com, https://generativelanguage.googleapis.com
 
 camel:
   main:
