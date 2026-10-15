@@ -43,9 +43,6 @@
     "react-split": "^2.0.14",
     "zod": "^4.3.6"
   },
-  "peerDependencies": {
-    "jolokia.js": "^2.6.1"
-  },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.0.8",
     "@swc/core": "^1.15.18",

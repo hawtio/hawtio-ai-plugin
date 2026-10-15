@@ -745,8 +745,6 @@ __metadata:
     webpack-cli: "npm:^7.0.0"
     webpack-dev-server: "npm:^6.0.0"
     zod: "npm:^4.3.6"
-  peerDependencies:
-    jolokia.js: ^2.6.1
   languageName: unknown
   linkType: soft
 
