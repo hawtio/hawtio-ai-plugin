@@ -1,4 +1,5 @@
 import { PageContext } from '@hawtio/react/ui'
+import { AIMessage } from '@langchain/core/messages'
 import Chatbot, { ChatbotDisplayMode } from '@patternfly/chatbot/dist/dynamic/Chatbot'
 import ChatbotContent from '@patternfly/chatbot/dist/dynamic/ChatbotContent'
 import ChatbotConversationHistoryNav, {
@@ -18,7 +19,6 @@ import MessageBar from '@patternfly/chatbot/dist/dynamic/MessageBar'
 import MessageBox from '@patternfly/chatbot/dist/dynamic/MessageBox'
 import { Content, Label } from '@patternfly/react-core'
 import React, { Dispatch, useContext, useEffect, useRef, useState } from 'react'
-import { AIMessage } from '@langchain/core/messages'
 import { aiService } from '../common/ai-service'
 import { ChatbotContext } from './context'
 import { log } from './globals'
@@ -54,6 +54,20 @@ export const ChatbotPanel: React.FC<{
     setFilteredConversations(filtered)
   }
 
+  const chatbotContent = (
+    <>
+      <ChatbotPanelHeader
+        displayMode={displayMode}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+        title={title}
+        hasCloseButton={displayMode !== ChatbotDisplayMode.embedded}
+      />
+      <ChatbotPanelContent />
+      <ChatbotPanelFooter />
+    </>
+  )
+
   return (
     <Chatbot isCompact displayMode={displayMode}>
       <ChatbotConversationHistoryNav
@@ -74,29 +88,19 @@ export const ChatbotPanel: React.FC<{
           setMessages([])
         }}
         handleTextInputChange={handleSearchTextChange}
-        drawerContent={
-          <>
-            <ChatbotPanelHeader
-              isDrawerOpen={isDrawerOpen}
-              setIsDrawerOpen={setIsDrawerOpen}
-              title={title}
-              hasCloseButton={displayMode === ChatbotDisplayMode.drawer}
-            />
-            <ChatbotPanelContent />
-            <ChatbotPanelFooter />
-          </>
-        }
+        drawerContent={chatbotContent}
       />
     </Chatbot>
   )
 }
 
 const ChatbotPanelHeader: React.FC<{
+  displayMode: ChatbotDisplayMode
   isDrawerOpen: boolean
   setIsDrawerOpen: Dispatch<React.SetStateAction<boolean>>
   title: string
   hasCloseButton: boolean
-}> = ({ isDrawerOpen, setIsDrawerOpen, title, hasCloseButton }) => {
+}> = ({ displayMode, isDrawerOpen, setIsDrawerOpen, title, hasCloseButton }) => {
   const { setIsChatbotOpen } = useContext(ChatbotContext)
   const modelName = aiService.getModel()?.name
 
@@ -104,7 +108,7 @@ const ChatbotPanelHeader: React.FC<{
     <ChatbotHeader>
       <ChatbotHeaderMain>
         <ChatbotHeaderMenu aria-expanded={isDrawerOpen} onMenuToggle={() => setIsDrawerOpen(!isDrawerOpen)} />
-        <ChatbotHeaderTitle>
+        <ChatbotHeaderTitle displayMode={displayMode}>
           <Content component='h2'>{title}</Content>
         </ChatbotHeaderTitle>
       </ChatbotHeaderMain>
