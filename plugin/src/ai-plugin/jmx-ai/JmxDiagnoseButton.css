@@ -1,0 +1,9 @@
+/* Offset the docked chatbot so it sits below the Hawtio Masthead instead of
+   extending behind it. The masthead height is derived from PF v6 CSS custom
+   properties: 2 × PaddingBlock + logo MaxHeight. Hawtio overrides the logo
+   max-height to 2rem, so we use that value rather than the PF default of
+   2.375rem to match the actual rendered height. */
+#ai-jmx-diagnose-chatbot-panel .pf-chatbot--docked {
+  inset-block-start: calc(2 * var(--pf-v6-c-masthead--PaddingBlock, 1rem) + 2rem);
+  height: calc(100% - 2 * var(--pf-v6-c-masthead--PaddingBlock, 1rem) - 2rem);
+}
