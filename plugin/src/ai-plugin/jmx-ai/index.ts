@@ -1,29 +1,20 @@
-import { hawtio, helpRegistry, workspace, type HawtioPlugin } from '@hawtio/react'
-import { log, pluginName, pluginPath, pluginTitle } from './globals'
-import help from './help.md'
-
-const order = 41
+import { hawtio, workspace, type HawtioPlugin } from '@hawtio/react'
+import { log, pluginName } from './globals'
 
 export const aiJmx: HawtioPlugin = () => {
   log.info('Loading', pluginName)
 
   hawtio.addDeferredPlugin(pluginName, async () => {
-    const [{ Jmx }, { JmxDiagnoseButton }] = await Promise.all([import('./ui'), import('./JmxDiagnoseButton')])
+    return import('./JmxDiagnoseButton').then(({ JmxDiagnoseButton }) => {
+      hawtio.addExtension('jmx-attributes-toolbar', {
+        component: JmxDiagnoseButton,
+        pluginId: pluginName,
+      })
 
-    hawtio.addExtension('jmx-attributes-toolbar', {
-      component: JmxDiagnoseButton,
-      pluginId: pluginName,
+      return {
+        id: pluginName,
+        isActive: async () => workspace.hasMBeans(),
+      }
     })
-
-    return {
-      id: pluginName,
-      title: pluginTitle,
-      path: pluginPath,
-      order,
-      component: Jmx,
-      knownQueryParams: ['nid'],
-      isActive: async () => workspace.hasMBeans(),
-    }
   })
-  helpRegistry.add(pluginName, pluginTitle, help, order)
 }

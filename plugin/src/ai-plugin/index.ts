@@ -20,8 +20,8 @@ import { aiJmx } from './jmx-ai'
  */
 export const plugin: HawtioPlugin = () => {
   aiCommon()
-  aiJmx()
   aiChat()
+  aiJmx()
 }
 
 // Register the custom plugin version to Hawtio
