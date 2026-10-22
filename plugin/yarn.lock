@@ -1493,9 +1493,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-sdk@npm:~1.10.0":
-  version: 1.10.0
-  resolution: "@langchain/langgraph-sdk@npm:1.10.0"
+"@langchain/langgraph-checkpoint@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@langchain/langgraph-checkpoint@npm:1.2.0"
+  peerDependencies:
+    "@langchain/core": ^1.1.48
+  checksum: 10/a351d69cdb273ba0036df078be489fe5e5181e973542a2376e902911de5d2b43d37593b39d82d69ee9ecbf5fdcbb22a4536a5091721c421db50dc471c31ab662
+  languageName: node
+  linkType: hard
+
+"@langchain/langgraph-sdk@npm:~1.12.5":
+  version: 1.12.5
+  resolution: "@langchain/langgraph-sdk@npm:1.12.5"
   dependencies:
     "@langchain/protocol": "npm:^0.0.19"
     "@types/json-schema": "npm:^7.0.15"
@@ -1510,22 +1519,22 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/6749c167ab0fe60e0554589450c14c455242c1fa852bcaf1a3adaf5d3607d925db07856e6d6ab77ac8cad1bcd6e321d12343b2f1e36872137aa6dc8d15cd5153
+  checksum: 10/c38e2163f248372256c7c99e2bf4225680e11c953e3925d06f1eaac84d450e50dc2bc23d3eb6ed818afecf01c96f6e8ae2a24fb75c160b6c725da909ceca0387
   languageName: node
   linkType: hard
 
-"@langchain/langgraph@npm:^1.4.10":
-  version: 1.4.13
-  resolution: "@langchain/langgraph@npm:1.4.13"
+"@langchain/langgraph@npm:^1.4.18":
+  version: 1.5.1
+  resolution: "@langchain/langgraph@npm:1.5.1"
   dependencies:
-    "@langchain/langgraph-checkpoint": "npm:^1.1.5"
-    "@langchain/langgraph-sdk": "npm:~1.10.0"
-    "@langchain/protocol": "npm:^0.0.18"
+    "@langchain/langgraph-checkpoint": "npm:^1.2.0"
+    "@langchain/langgraph-sdk": "npm:~1.12.5"
+    "@langchain/protocol": "npm:^0.0.19"
     "@standard-schema/spec": "npm:1.1.0"
   peerDependencies:
     "@langchain/core": ^1.1.48
     zod: ^3.25.32 || ^4.2.0
-  checksum: 10/c1d25a5f383f927c49fa4aee264e032ab5a1604873a8792154bcd80937fa0620642ab44af2c92e359f7c943f10772d86f7c7b5a130159d0fd0b81b94524ca911
+  checksum: 10/1acb08b4866a2b2307b35426b1499775a493ab3d56694039b557b54f611a85b2c70b17a41e84da648ade7d919e1574d0d9a86e2196d502e8b75f28150d8789ff
   languageName: node
   linkType: hard
 
@@ -1550,13 +1559,6 @@ __metadata:
   peerDependencies:
     "@langchain/core": ^1.1.48
   checksum: 10/71a183fb6cbb3b33073e961f1644194253bca1763b9f5d5d6614f161954cca01c84dc643cf77590727aee7f9cacd1a9c7534a811d5e3a11d478608a07942bd31
-  languageName: node
-  linkType: hard
-
-"@langchain/protocol@npm:^0.0.18":
-  version: 0.0.18
-  resolution: "@langchain/protocol@npm:0.0.18"
-  checksum: 10/25cb54e34d41657f8adb8047727f37f95a5a8e672061f31715175377c4b85c8a56550c064f84d5689c470b27e4f27e73166952d9f1075fc9784533d5ba12181e
   languageName: node
   linkType: hard
 
@@ -8380,16 +8382,42 @@ __metadata:
   linkType: hard
 
 "langchain@npm:^1.2.39":
-  version: 1.5.10
-  resolution: "langchain@npm:1.5.10"
+  version: 1.5.18
+  resolution: "langchain@npm:1.5.18"
   dependencies:
-    "@langchain/langgraph": "npm:^1.4.10"
+    "@langchain/langgraph": "npm:^1.4.18"
     "@langchain/langgraph-checkpoint": "npm:^1.1.5"
-    langsmith: "npm:>=0.5.0 <1.0.0"
+    langsmith: "npm:>=0.11.0 <1.0.0"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.2.9
-  checksum: 10/cef0eb43110bd0c2d3d576442904e46cb315b72b6f3a1428c66201e8511320e9fcc2ade51d170c91494e6d04986f00a143de891e996d1416987a8288d33025a2
+    "@langchain/core": ^1.2.18
+  checksum: 10/7e8b0bdccfec7a6422db461fe3c0abccd5b2ff07c0c81d80372a6c9373d636a4fc316d58b64bd4648e2f819775c09e19ae8862f821212dc5cc32cb24456271e0
+  languageName: node
+  linkType: hard
+
+"langsmith@npm:>=0.11.0 <1.0.0":
+  version: 0.11.0
+  resolution: "langsmith@npm:0.11.0"
+  dependencies:
+    p-queue: "npm:6.6.2"
+  peerDependencies:
+    "@opentelemetry/api": "*"
+    "@opentelemetry/exporter-trace-otlp-proto": "*"
+    "@opentelemetry/sdk-trace-base": "*"
+    openai: "*"
+    ws: ">=7"
+  peerDependenciesMeta:
+    "@opentelemetry/api":
+      optional: true
+    "@opentelemetry/exporter-trace-otlp-proto":
+      optional: true
+    "@opentelemetry/sdk-trace-base":
+      optional: true
+    openai:
+      optional: true
+    ws:
+      optional: true
+  checksum: 10/7e66cc296bdea762315548b4598873fef510add0bffa63b6c5a946d558a1ac6c828b8b25ab9d992f58988013fe9fb52ffd0702673ddffd73118c5f248401ca8c
   languageName: node
   linkType: hard
 
@@ -10029,7 +10057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^6.6.2":
+"p-queue@npm:6.6.2, p-queue@npm:^6.6.2":
   version: 6.6.2
   resolution: "p-queue@npm:6.6.2"
   dependencies:
