@@ -63,8 +63,14 @@ export const JmxDiagnoseButton: React.FC<{
 
   return (
     <ChatbotContext.Provider value={chatbotContext}>
-      <Button variant='primary' size='sm' icon={<MonitoringIcon />} onClick={diagnose} style={{ alignSelf: 'flex-start' }}>
-        Diagnose
+      <Button
+        variant='primary'
+        size='sm'
+        icon={<MonitoringIcon />}
+        onClick={diagnose}
+        style={{ alignSelf: 'flex-start' }}
+      >
+        AI - Diagnose
       </Button>
       {isChatbotOpen && (
         <div id='ai-jmx-diagnose-chatbot-panel'>
