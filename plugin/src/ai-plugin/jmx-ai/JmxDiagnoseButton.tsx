@@ -63,7 +63,7 @@ export const JmxDiagnoseButton: React.FC<{
 
   return (
     <ChatbotContext.Provider value={chatbotContext}>
-      <Button variant='primary' size='sm' icon={<MonitoringIcon />} onClick={diagnose}>
+      <Button variant='primary' size='sm' icon={<MonitoringIcon />} onClick={diagnose} style={{ alignSelf: 'flex-start' }}>
         Diagnose
       </Button>
       {isChatbotOpen && (
