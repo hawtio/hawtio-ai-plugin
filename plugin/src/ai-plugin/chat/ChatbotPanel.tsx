@@ -57,7 +57,6 @@ export const ChatbotPanel: React.FC<{
   const chatbotContent = (
     <>
       <ChatbotPanelHeader
-        displayMode={displayMode}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
         title={title}
@@ -95,12 +94,11 @@ export const ChatbotPanel: React.FC<{
 }
 
 const ChatbotPanelHeader: React.FC<{
-  displayMode: ChatbotDisplayMode
   isDrawerOpen: boolean
   setIsDrawerOpen: Dispatch<React.SetStateAction<boolean>>
   title: string
   hasCloseButton: boolean
-}> = ({ displayMode, isDrawerOpen, setIsDrawerOpen, title, hasCloseButton }) => {
+}> = ({ isDrawerOpen, setIsDrawerOpen, title, hasCloseButton }) => {
   const { setIsChatbotOpen } = useContext(ChatbotContext)
   const modelName = aiService.getModel()?.name
 
@@ -108,7 +106,7 @@ const ChatbotPanelHeader: React.FC<{
     <ChatbotHeader>
       <ChatbotHeaderMain>
         <ChatbotHeaderMenu aria-expanded={isDrawerOpen} onMenuToggle={() => setIsDrawerOpen(!isDrawerOpen)} />
-        <ChatbotHeaderTitle displayMode={displayMode}>
+        <ChatbotHeaderTitle>
           <Content component='h2'>{title}</Content>
         </ChatbotHeaderTitle>
       </ChatbotHeaderMain>
