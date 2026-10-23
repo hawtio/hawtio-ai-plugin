@@ -38,6 +38,7 @@ node
 .env.development.local
 .env.test.local
 .env.production.local
+.envrc
 .vscode/
 
 npm-debug.log*

@@ -15,14 +15,21 @@ export const MODELS: AiModel[] = [
   { id: 'gpt-5.4-mini', name: 'GPT-5.4 mini', tool: true, provider: 'openai' },
 
   // Anthropic Claude models
+  { id: 'claude-opus-5-5', name: 'Claude Opus 5.5', tool: true, provider: 'anthropic' },
+  { id: 'claude-sonnet-5-5', name: 'Claude Sonnet 5.5', tool: true, provider: 'anthropic' },
+  { id: 'claude-haiku-5-5', name: 'Claude Haiku 5.5', tool: true, provider: 'anthropic' },
+  { id: 'claude-fable-5-1', name: 'Claude Fable 5.1', tool: true, provider: 'anthropic' },
   { id: 'claude-opus-4-7', name: 'Claude Opus 4.7', tool: true, provider: 'anthropic' },
   { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', tool: true, provider: 'anthropic' },
   { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5', tool: true, provider: 'anthropic' },
 
   // Google Gemini models
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tool: true, provider: 'google-genai' },
+  { id: 'gemini-4-argon', name: 'Gemini 4 Argon', tool: true, provider: 'google-genai' },
+  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', tool: true, provider: 'google-genai' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', tool: true, provider: 'google-genai' },
+  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite', tool: true, provider: 'google-genai' },
   { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash-Lite', tool: true, provider: 'google-genai' },
-  { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro', tool: true, provider: 'google-genai' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', tool: true, provider: 'google-genai' },
 
   // Ollama models
   { id: 'granite4.1:3b', name: 'Granite 4.1 3B', tool: true, provider: 'ollama' },
