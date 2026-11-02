@@ -13,7 +13,7 @@ import ChatbotHeader, {
   ChatbotHeaderMenu,
   ChatbotHeaderTitle,
 } from '@patternfly/chatbot/dist/dynamic/ChatbotHeader'
-import ChatbotWelcomePrompt from '@patternfly/chatbot/dist/dynamic/ChatbotWelcomePrompt'
+import ChatbotWelcomePrompt, { WelcomePrompt } from '@patternfly/chatbot/dist/dynamic/ChatbotWelcomePrompt'
 import Message, { MessageProps } from '@patternfly/chatbot/dist/dynamic/Message'
 import MessageBar from '@patternfly/chatbot/dist/dynamic/MessageBar'
 import MessageBox from '@patternfly/chatbot/dist/dynamic/MessageBox'
@@ -25,6 +25,63 @@ import { log } from './globals'
 import { ThinkInfo } from './ThinkInfo'
 import { ToolCallsApprove } from './ToolCallsApprove'
 import { ToolCallsInfo } from './ToolCallsInfo'
+
+/**
+ * Returns a function that sends a user message to the AI and updates the conversation.
+ * Shared by the message bar and the welcome prompt cards.
+ */
+function useSendMessage(): (message: string) => Promise<void> {
+  const { username } = useContext(PageContext)
+  const { messages, setAnnouncement, setIsSendButtonDisabled, updateConversations } = useContext(ChatbotContext)
+  const messagesRef = useRef(messages)
+
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
+
+  return async (message: string) => {
+    if (!message.trim()) {
+      return
+    }
+    log.debug('Send', messagesRef.current)
+
+    setIsSendButtonDisabled(true)
+    const newMessages: MessageProps[] = []
+    newMessages.push(...messagesRef.current)
+    newMessages.push(aiService.createUserMessage(username, message))
+    newMessages.push(aiService.createLoadingBotMessage())
+    updateConversations(newMessages)
+    // make announcement to assistive devices that new messages have been added
+    setAnnouncement(`Message from User: ${message}. Message from Bot is loading.`)
+    log.debug('handleSend - new messages:', newMessages)
+
+    const dialogId = newMessages[0]!.id!
+    const loadedMessages: MessageProps[] = [...newMessages]
+
+    const onMessage = (intermediateAnswer: AIMessage) => {
+      // Remove loading, insert intermediate tool-calls message, re-add loading
+      loadedMessages.pop()
+      loadedMessages.push(aiService.toBotMessage(intermediateAnswer, true, ThinkInfo, ToolCallsInfo, ToolCallsApprove))
+      loadedMessages.push(aiService.createLoadingBotMessage())
+      updateConversations([...loadedMessages])
+    }
+
+    const answer = await (newMessages.length === 2
+      ? aiService.newChat(dialogId, { message }, onMessage)
+      : aiService.chat(dialogId, message, onMessage))
+    log.debug('handleSend - loaded messages:', loadedMessages)
+    // Remove the loading message, replace with the final bot message
+    loadedMessages.pop()
+    const botMessage = aiService.toBotMessage(answer, false, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
+    loadedMessages.push(botMessage)
+    updateConversations([...loadedMessages])
+    setAnnouncement(`Message from Bot: ${answer}`)
+    // Keep send button disabled if waiting for user to approve/reject tool calls
+    if (!aiService.hasToolCalls(answer)) {
+      setIsSendButtonDisabled(false)
+    }
+  }
+}
 
 export const ChatbotPanel: React.FC<{
   title: string
@@ -118,13 +175,45 @@ const ChatbotPanelHeader: React.FC<{
   )
 }
 
+const WELCOME_PROMPTS: WelcomePrompt[] = [
+  {
+    title: 'Health check',
+    message:
+      'Check the overall health of this JVM (heap, GC, threads, CPU, uptime) and report any concerns. Do not modify anything.',
+  },
+  {
+    title: 'Memory and GC',
+    message: 'Analyze the heap usage and garbage collection activity. Is there any sign of memory pressure or a leak?',
+  },
+  {
+    title: 'Threads and deadlocks',
+    message: 'Check the thread count and peak, and detect any deadlocked threads.',
+  },
+  {
+    title: 'Application anomalies',
+    message:
+      'Look at the application-specific MBeans (e.g. Camel, ActiveMQ, Tomcat) and point out signs of trouble such as failures, queue backlogs, or exhausted pools.',
+  },
+]
+
 const ChatbotPanelContent: React.FC = () => {
-  const { messages, announcement } = useContext(ChatbotContext)
+  const { messages, announcement, isSendButtonDisabled } = useContext(ChatbotContext)
   const { username } = useContext(PageContext)
+  const sendMessage = useSendMessage()
   const scrollToBottomRef = useRef<HTMLDivElement>(null)
 
   const welcomeTitle = `Hello, ${username}!`
   const welcomeDescription = 'How can I help you manage or diagnose your Java application?'
+  const welcomePrompts = WELCOME_PROMPTS.map(({ title, message }) => ({
+    title,
+    message,
+    onClick: () => {
+      // Same guard as the send button: do not start a new request while one is in progress
+      if (!isSendButtonDisabled && message) {
+        sendMessage(message)
+      }
+    },
+  }))
 
   useEffect(() => {
     if (messages.length > 2) {
@@ -135,7 +224,14 @@ const ChatbotPanelContent: React.FC = () => {
   return (
     <ChatbotContent>
       <MessageBox announcement={announcement}>
-        {messages.length === 0 && <ChatbotWelcomePrompt title={welcomeTitle} description={welcomeDescription} />}
+        {messages.length === 0 && (
+          <ChatbotWelcomePrompt
+            isCompact
+            title={welcomeTitle}
+            description={welcomeDescription}
+            prompts={welcomePrompts}
+          />
+        )}
         {messages.map((message, index) => (
           <React.Fragment key={message.id}>
             {index === messages.length - 1 && <div ref={scrollToBottomRef} />}
@@ -148,62 +244,13 @@ const ChatbotPanelContent: React.FC = () => {
 }
 
 const ChatbotPanelFooter: React.FC = () => {
-  const { username } = useContext(PageContext)
-  const { messages, setAnnouncement, isSendButtonDisabled, setIsSendButtonDisabled, updateConversations } =
-    useContext(ChatbotContext)
-  const messagesRef = useRef(messages)
-
-  useEffect(() => {
-    messagesRef.current = messages
-  }, [messages])
-
-  const handleSend = async (message: string) => {
-    if (!message.trim()) {
-      return
-    }
-    log.debug('Send', messagesRef.current)
-
-    setIsSendButtonDisabled(true)
-    const newMessages: MessageProps[] = []
-    newMessages.push(...messagesRef.current)
-    newMessages.push(aiService.createUserMessage(username, message))
-    newMessages.push(aiService.createLoadingBotMessage())
-    updateConversations(newMessages)
-    // make announcement to assistive devices that new messages have been added
-    setAnnouncement(`Message from User: ${message}. Message from Bot is loading.`)
-    log.debug('handleSend - new messages:', newMessages)
-
-    const dialogId = newMessages[0]!.id!
-    const loadedMessages: MessageProps[] = [...newMessages]
-
-    const onMessage = (intermediateAnswer: AIMessage) => {
-      // Remove loading, insert intermediate tool-calls message, re-add loading
-      loadedMessages.pop()
-      loadedMessages.push(aiService.toBotMessage(intermediateAnswer, true, ThinkInfo, ToolCallsInfo, ToolCallsApprove))
-      loadedMessages.push(aiService.createLoadingBotMessage())
-      updateConversations([...loadedMessages])
-    }
-
-    const answer = await (newMessages.length === 2
-      ? aiService.newChat(dialogId, { message }, onMessage)
-      : aiService.chat(dialogId, message, onMessage))
-    log.debug('handleSend - loaded messages:', loadedMessages)
-    // Remove the loading message, replace with the final bot message
-    loadedMessages.pop()
-    const botMessage = aiService.toBotMessage(answer, false, ThinkInfo, ToolCallsInfo, ToolCallsApprove)
-    loadedMessages.push(botMessage)
-    updateConversations([...loadedMessages])
-    setAnnouncement(`Message from Bot: ${answer}`)
-    // Keep send button disabled if waiting for user to approve/reject tool calls
-    if (!aiService.hasToolCalls(answer)) {
-      setIsSendButtonDisabled(false)
-    }
-  }
+  const { isSendButtonDisabled } = useContext(ChatbotContext)
+  const sendMessage = useSendMessage()
 
   return (
     <ChatbotFooter>
       <MessageBar
-        onSendMessage={m => handleSend(String(m))}
+        onSendMessage={m => sendMessage(String(m))}
         hasAttachButton={false}
         isSendButtonDisabled={isSendButtonDisabled}
       />
