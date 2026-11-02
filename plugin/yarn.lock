@@ -1676,15 +1676,15 @@ __metadata:
   linkType: hard
 
 "@langchain/openai@npm:^1.4.4":
-  version: 1.6.0
-  resolution: "@langchain/openai@npm:1.6.0"
+  version: 1.8.0
+  resolution: "@langchain/openai@npm:1.8.0"
   dependencies:
     js-tiktoken: "npm:^1.0.12"
-    openai: "npm:^7.10.0"
+    openai: "npm:^7.45.1"
     zod: "npm:^3.25.76 || ^4"
   peerDependencies:
-    "@langchain/core": ^1.2.13
-  checksum: 10/788110655e99c5520ad677751e4e92579674603ee6c08446773bcf0e41d4b522d23285a35e8b55d9f544302febbc7c8fcdd0c3dca6ae2393eeb6c4b1041c9a95
+    "@langchain/core": ^1.3.1
+  checksum: 10/f16530262d43f643f1f662c18f5fcf6c144be6e799da29445275457a92f5d4a31b1d19f9eb92b0b32146b3bc69c6854921131bf5643411b5b57974e2b74dd779
   languageName: node
   linkType: hard
 
@@ -10275,13 +10275,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^7.10.0":
-  version: 7.23.0
-  resolution: "openai@npm:7.23.0"
+"openai@npm:^7.45.1":
+  version: 7.45.1
+  resolution: "openai@npm:7.45.1"
   peerDependencies:
     "@aws-sdk/credential-provider-node": ">=3.972.0 <4"
     "@smithy/hash-node": ">=4.3.0 <5"
     "@smithy/signature-v4": ">=5.4.0 <6"
+    google-auth-library: ">=9.15.1 <12"
     undici: ">=5 <9"
     ws: ^8.21.0
     zod: ^3.25 || ^4.0
@@ -10292,13 +10293,15 @@ __metadata:
       optional: true
     "@smithy/signature-v4":
       optional: true
+    google-auth-library:
+      optional: true
     undici:
       optional: true
     ws:
       optional: true
     zod:
       optional: true
-  checksum: 10/d6c18cfdc481ce00019e6d2db5fac2727749bc349a6665c4e6a35434e5b87e78562270fe140502c587b0d12a5653cf2c05558382ac93ed3ddd13a2e6c2b4a5ef
+  checksum: 10/9c575f813389415ec881c252ae588a2fd0e00d96db353d3e09c1922f0253198c2057fe5c5e7bb3ebe16f5cddc257902e34400421336b68dc702a1f11f7f602ae
   languageName: node
   linkType: hard
 
